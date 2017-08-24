@@ -1,0 +1,48 @@
+= Sensor Generator
+
+
+== Prerequisites
+
+* Apache Maven
+* JDK 8+
+
+== Getting started
+
+
+== Running the project
+
+Once you have retrieved the project, you can check that everything works with:
+
+[source]
+----
+mvn compile vertx:run
+----
+The command compiles the project and compules, then  it launches the application, so you can check by yourself. (Uncomment section using the vertx-maven-plugin)
+
+
+Open your browser to http://localhost:8080. You should see a _Hello World_ message.
+
+== Anatomy of the project
+
+The project contains:
+
+* a `pom.xml` file
+* a _main_ verticle file (src/main/java/io/vertx/starter/MainVerticle.java)
+* an unit test (src/main/test/io/vertx/starter/MainVerticleTest.java)
+
+== Start to hack
+- Add code to MainVerticle.java or create new main Verticle (in which case change in pom.xml which Verticle class to launch)
+- When using the exec-maven-plugin Run `redeploy.sh` (or `redeploy.bat` on Windows) and the project recompiles while editing
+- When using the vertx-mavn-plugin it auto-redeploys the application on changes
+
+NOTE: the `redeploy` script are also configurable
+
+== Building the project
+
+To build the project, just use:
+
+----
+mvn clean package
+----
+
+It generates a _fat-jar_ in the `target` directory.
