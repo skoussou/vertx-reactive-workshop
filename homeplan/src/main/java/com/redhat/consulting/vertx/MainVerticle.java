@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.redhat.consulting.vertx.data.DevicesMessage;
+import com.redhat.consulting.vertx.data.Devices;
 import com.redhat.consulting.vertx.data.HomePlan;
 
 import io.vertx.core.AbstractVerticle;
@@ -284,7 +284,7 @@ public class MainVerticle extends AbstractVerticle {
 	private Future<String> sendDevicesRegistration(HomePlan homePlan) {
 		Future<String> future = Future.future();
 		// create devices message, that is, homeplan without sensors
-		DevicesMessage message = new DevicesMessage(homePlan.getId(), homePlan.getDevices());
+		Devices message = new Devices(homePlan.getId(), homePlan.getDevices());
 		// FIXME I defined reply.. will see if we add it on the other service
 		// side
 		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {

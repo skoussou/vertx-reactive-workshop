@@ -9,7 +9,7 @@ import java.util.List;
  * @author dsancho
  *
  */
-public class DevicesMessage implements Serializable {
+public class Devices implements Serializable {
 
 	/**
 	 * 
@@ -20,13 +20,13 @@ public class DevicesMessage implements Serializable {
 	
 	private List<Device> devices;
 	
-	public DevicesMessage(String id, List<Device> devices) {
+	public Devices(String id, List<Device> devices) {
 		super();
 		this.id = id;
 		this.devices = devices;
 	}
 	
-	public DevicesMessage() {
+	public Devices() {
 		super();
 	}
 
