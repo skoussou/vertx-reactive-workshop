@@ -23,6 +23,8 @@ import org.junit.runner.RunWith;
 
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_STATE;
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_TYPE;
+import com.redhat.consulting.vertx.data.Device;
+import com.redhat.consulting.vertx.data.DeviceDTO;
 
 @RunWith(VertxUnitRunner.class)
 public class MainVerticleTest {
@@ -72,8 +74,8 @@ public class MainVerticleTest {
 
   /* ----------- CREATEPAYLOAD DEVICE FOR REGISTRATION-------------- */
   private String createRegistrationPayload() {
-		Device regDev1 = new Device(null, "kitchen-1", DEVICE_TYPE.AIRCON, null, null,null, null, null);
-		Device regDev2 = new Device(null, "bedroom-1", DEVICE_TYPE.AIRCON, null, null, null, null, null);
+		Device regDev1 = new Device(null, "kitchen-1", DEVICE_TYPE.AIRCON, null, null,null, null, 0L, 0L);
+		Device regDev2 = new Device(null, "bedroom-1", DEVICE_TYPE.AIRCON, null, null, null, null, 0L, 0L);
 		
 		HashMap<String, List<Device>> payload = new HashMap<String, List<Device>>();
 		DeviceDTO dtoMsg = new DeviceDTO("kousourisHousehold", Arrays.asList(regDev1, regDev2));
