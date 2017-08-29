@@ -1,8 +1,6 @@
 package com.redhat.consulting.vertx;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import com.redhat.consulting.vertx.data.Devices;
@@ -66,61 +64,83 @@ public class MainVerticle extends AbstractVerticle {
 
 	private void getAll(RoutingContext routingContext) {
 		SharedData sd = vertx.sharedData();
-
 		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().get(SET_ID, rh -> {
 					if (rh.succeeded()) {
-						Set<String> indexes = rh.result();
-						// create final list
-						List<HomePlan> homePlans = new ArrayList<HomePlan>();
-						System.out.println("Indexes size: " + indexes.size());
-						if (indexes != null && !indexes.isEmpty()) {
-							sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, arEntries -> {
-								System.out.println("getClusterWideMap " + HOMEPLANS_MAP);
-
-								if (arEntries.succeeded()) {
-									System.out.println("Iterate indexes");
-
-									// get all Home plans
-									for (String id : indexes) {
-										System.out.println("Id " + id);
-
-										arEntries.result().get(id, arHP -> {
-
-											if (arHP.succeeded()) {
-												HomePlan homePlan = arHP.result();
-												System.out.println("HomePlan obtained " + homePlan);
-
-												if (homePlan != null) {
-													homePlans.add(homePlan);
-													System.out.println("HomePlan added " + homePlan);
-												}
-
-											} else {
-												// Something went wrong!
-												routingContext.fail(500);
-											}
-										});
-									}
-								} else {
-									// Something went wrong!
-									routingContext.fail(500);
-								}
-								System.out.println("Returning homeplans: " + homePlans.size());
-
-								routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-										.end(Json.encodePrettily(homePlans));
-
-							});
-						}
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(homePlans));
+								.end(Json.encodePrettily(rh.result()));
+					} else {
+						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+								.end(Json.encodePrettily(new HashSet<String>()));
 					}
 				});
+			} else {
+				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+						.end(Json.encodePrettily(new HashSet<String>()));
 			}
 		});
 	}
+
+//	private void getAll(RoutingContext routingContext) {
+//	 SharedData sd = vertx.sharedData();
+//	
+//	 sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
+//	 if (res.succeeded()) {
+//	 res.result().get(SET_ID, rh -> {
+//	 if (rh.succeeded()) {
+//	 Set<String> indexes = rh.result();
+//	 // create final list
+//	 List<HomePlan> homePlans = new ArrayList<HomePlan>();
+//	 System.out.println("Indexes size: " + indexes.size());
+//	 if (indexes != null && !indexes.isEmpty()) {
+//	 sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, arEntries -> {
+//	 System.out.println("getClusterWideMap " + HOMEPLANS_MAP);
+//	
+//	 if (arEntries.succeeded()) {
+//	 System.out.println("Iterate indexes");
+//	
+//	 // get all Home plans
+//	 for (String id : indexes) {
+//	 System.out.println("Id " + id);
+//	
+//	 arEntries.result().get(id, arHP -> {
+//	
+//	 if (arHP.succeeded()) {
+//	 HomePlan homePlan = arHP.result();
+//	 System.out.println("HomePlan obtained " + homePlan);
+//	
+//	 if (homePlan != null) {
+//	 homePlans.add(homePlan);
+//	 System.out.println("HomePlan added " + homePlan);
+//	 }
+//	
+//	 } else {
+//	 // Something went wrong!
+//	 routingContext.fail(500);
+//	 }
+//	 });
+//	 }
+//	 } else {
+//	 // Something went wrong!
+//	 routingContext.fail(500);
+//	 }
+//	 System.out.println("Returning homeplans: " + homePlans.size());
+//	
+//	 routingContext.response().putHeader("content-type", "application/json;
+//	 charset=utf-8")
+//	 .end(Json.encodePrettily(homePlans));
+//	
+//	 });
+//	 }
+//	 routingContext.response().putHeader("content-type", "application/json;
+//	 charset=utf-8")
+//	 .end(Json.encodePrettily(homePlans));
+//	 }
+//	 });
+//	 }
+//	 });
+//	 }
 
 	private void getOne(RoutingContext routingContext) {
 		SharedData sd = vertx.sharedData();
@@ -143,29 +163,30 @@ public class MainVerticle extends AbstractVerticle {
 
 		// keep it for see differences (may be useful in workshop)
 
-//		sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
-//			if (res.succeeded()) {
-//				res.result().get(routingContext.pathParam(ID_PARAM), ar -> {
-//					if (ar.succeeded()) {
-//						HomePlan homePlan = ar.result();
-//						if (homePlan != null) {
-//							routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-//									.end(Json.encodePrettily(homePlan));
-//						} else {
-//							routingContext.fail(404);
-//						}
-//
-//					} else {
-//						// Something went wrong!
-//						routingContext.fail(500);
-//					}
-//				});
-//				;
-//			} else {
-//				// Something went wrong!
-//				routingContext.fail(500);
-//			}
-//		});
+		// sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
+		// if (res.succeeded()) {
+		// res.result().get(routingContext.pathParam(ID_PARAM), ar -> {
+		// if (ar.succeeded()) {
+		// HomePlan homePlan = ar.result();
+		// if (homePlan != null) {
+		// routingContext.response().putHeader("content-type",
+		// "application/json; charset=utf-8")
+		// .end(Json.encodePrettily(homePlan));
+		// } else {
+		// routingContext.fail(404);
+		// }
+		//
+		// } else {
+		// // Something went wrong!
+		// routingContext.fail(500);
+		// }
+		// });
+		// ;
+		// } else {
+		// // Something went wrong!
+		// routingContext.fail(500);
+		// }
+		// });
 	}
 
 	private void addOne(RoutingContext routingContext) {
@@ -292,7 +313,7 @@ public class MainVerticle extends AbstractVerticle {
 				future.complete("Received reply");
 			} else {
 				// FIXME when device management is ready, change lines
-				// future.fail("No reply from receiver");
+				//future.fail("No reply from receiver");
 				future.complete("No reply.. but mocking OK");
 			}
 		});
