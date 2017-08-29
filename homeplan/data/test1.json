@@ -1,0 +1,19 @@
+{
+	"id": "test1",
+	"sensorLocations": [{
+		"type": "kitchen",
+		"id": "kitchen-1",
+		"temperature": 22
+	}, {
+		"type": "bedroom",
+		"id": "bedroom-1",
+		"temperature": 23
+	}],
+	"devices": [{
+		"type": "air-on",
+		"id": "kitchen-1"
+	}, {
+		"type": "air-con",
+		"id": "bedroom-1"
+	}]
+}

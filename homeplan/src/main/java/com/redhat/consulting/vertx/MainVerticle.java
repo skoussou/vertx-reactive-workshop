@@ -5,9 +5,11 @@ import java.util.Set;
 
 import com.redhat.consulting.vertx.data.Devices;
 import com.redhat.consulting.vertx.data.HomePlan;
+import com.redhat.consulting.vertx.data.HomePlanIds;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.Json;
 import io.vertx.core.shareddata.SharedData;
 import io.vertx.ext.web.Router;
@@ -37,6 +39,10 @@ public class MainVerticle extends AbstractVerticle {
 
 	// Addresses
 	private static final String DEVICE_REGISTRATION_EVENTS_ADDRESS = "device-reg";
+	
+	private static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
+
+
 
 	@Override
 	public void start() {
@@ -58,6 +64,29 @@ public class MainVerticle extends AbstractVerticle {
 		router.put(ROOT_PATH + "/:" + ID_PARAM).handler(this::addOne);
 
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
+		
+		vertx.eventBus().<String>consumer(HOMEPLANS_EVENTS_ADDRESS, message -> {
+			reply(message);
+		});
+		
+	}
+
+	// Methods used by event bus consumer
+	
+	private void reply(Message<String> message) {
+		SharedData sd = vertx.sharedData();
+		Future<HomePlan> futureHomePlan = getHomePlan(sd, message.body());
+		futureHomePlan.compose(s -> {
+			HomePlan homePlan = futureHomePlan.result();
+			if (homePlan != null) {
+				message.reply(Json.encode(homePlan));
+			} else {
+				message.fail(404, "Not found");
+			}
+		}, Future.future().setHandler(handler -> {
+			handler.cause().printStackTrace();
+			message.fail(500, "Homeplan consumer error");
+		}));
 	}
 
 	// Methods used by router
@@ -67,17 +96,17 @@ public class MainVerticle extends AbstractVerticle {
 		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().get(SET_ID, rh -> {
-					if (rh.succeeded()) {
+					if (rh.succeeded() && rh.result()!=null) {
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(rh.result()));
+								.end(Json.encodePrettily(new HomePlanIds(rh.result())));
 					} else {
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(new HashSet<String>()));
+								.end(Json.encodePrettily(new HomePlanIds()));
 					}
 				});
 			} else {
 				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-						.end(Json.encodePrettily(new HashSet<String>()));
+						.end(Json.encodePrettily(new HomePlanIds()));
 			}
 		});
 	}
@@ -248,6 +277,7 @@ public class MainVerticle extends AbstractVerticle {
 		return future;
 	}
 
+	// FIXME Concurrency... what if were adding several homeplans at the same time? Lock should be done
 	private Future<String> addHomePlan(SharedData sd, String id, HomePlan homePlan) {
 		Future<String> future = Future.future();
 		sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
@@ -268,6 +298,7 @@ public class MainVerticle extends AbstractVerticle {
 		return future;
 	}
 
+	// FIXME Concurrency... what if were adding several ids at the same time? Lock should be done
 	private Future<String> addIdToIndex(SharedData sd, String id) {
 		Future<String> future = Future.future();
 		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
@@ -306,15 +337,12 @@ public class MainVerticle extends AbstractVerticle {
 		Future<String> future = Future.future();
 		// create devices message, that is, homeplan without sensors
 		Devices message = new Devices(homePlan.getId(), homePlan.getDevices());
-		// FIXME I defined reply.. will see if we add it on the other service
-		// side
 		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {
 			if (reply.succeeded()) {
 				future.complete("Received reply");
 			} else {
-				// FIXME when device management is ready, change lines
-				//future.fail("No reply from receiver");
-				future.complete("No reply.. but mocking OK");
+				future.fail("No reply from Device management service");
+				//future.complete("No reply.. but mocking OK");
 			}
 		});
 		return future;
