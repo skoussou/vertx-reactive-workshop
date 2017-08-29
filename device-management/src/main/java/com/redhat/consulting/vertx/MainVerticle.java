@@ -486,7 +486,7 @@ public class MainVerticle extends AbstractVerticle {
 							// HERE I need to return the existing device						
 							
 							System.out.println("\n\n REPLYING to message FOUND DEVICE \n ------------------------------------------------------------------- \n "+Json.encodePrettily(device)+" \n -------------------------------------------------------------------");
-							message.reply(device);
+							message.reply(Json.encodePrettily(device));
 
 						} else {
 							// HERE I need to return c

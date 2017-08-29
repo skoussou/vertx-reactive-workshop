@@ -10,10 +10,10 @@
 		"temperature": 23
 	}],
 	"devices": [{
-		"type": "air-on",
+		"type": "AIRCON",
 		"id": "kitchen-1"
 	}, {
-		"type": "air-con",
+		"type": "AIRCON",
 		"id": "bedroom-1"
 	}]
 }

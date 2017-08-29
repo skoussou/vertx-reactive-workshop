@@ -25,9 +25,9 @@ public class Device implements Serializable {
 	
 	private MainVerticle.DEVICE_STATE state = DEVICE_STATE.OFF;
 
-	private Integer fromNumber;
+	private int fromNumber;
 
-	private Integer toNumber;
+	private int toNumber;
 	
 	//private Calendar timeStart;
 	private long timeStart;
@@ -37,8 +37,8 @@ public class Device implements Serializable {
 
 
 	
-	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, Integer fromNumber,
-			Integer toNumber, long timeStart, long actionSequence) {
+	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, int fromNumber,
+			int toNumber, long timeStart, long actionSequence) {
 		super();
 		this.housePlanId = housePlanId;
 		this.id = id;
@@ -77,11 +77,11 @@ public class Device implements Serializable {
 		return state;
 	}
 
-	public Integer getFromNumber() {
+	public int getFromNumber() {
 		return fromNumber;
 	}
 
-	public Integer getToNumber() {
+	public int getToNumber() {
 		return toNumber;
 	}
 
