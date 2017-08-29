@@ -1,4 +1,4 @@
-package com.redhat.consulting.vertx;
+package com.redhat.consulting.vertx.data;
 
 import java.util.List;
 
