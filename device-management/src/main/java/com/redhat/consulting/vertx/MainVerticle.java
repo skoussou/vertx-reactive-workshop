@@ -203,11 +203,11 @@ public class MainVerticle extends AbstractVerticle {
 				
 				System.out.println(deviceDataRequested);
 							
-				getDevice(generatedDeviceKey(deviceDataRequested.getId(), deviceDataRequested.getSensorId()), message);			}
+				getDevice(generatedDeviceKey(deviceDataRequested.getHousePlanId(), deviceDataRequested.getSensor()), message);			}
 		});		
 		
         //ONLY RE-ACTIVATE FOR TESTING - HACKING
-		System.out.println("\n\n SENDING MESSAGE to #" + MainVerticle.DEVICE_DATA_EVENTS_ADDRESS);
+//		System.out.println("\n\n SENDING MESSAGE to #" + MainVerticle.DEVICE_DATA_EVENTS_ADDRESS);
 //		
 //		vertx.eventBus().send(MainVerticle.DEVICE_REGISTRATION_EVENTS_ADDRESS, createRegistrationPayload());
 //		
@@ -485,18 +485,14 @@ public class MainVerticle extends AbstractVerticle {
 						if (device != null) {
 							// HERE I need to return the existing device						
 							
-							System.out.println("\n\n FOUND DEVICE \n ------------------------------------------------------------------- \n "+device.toString()+" \n -------------------------------------------------------------------");
-							
-							// IF I AM USING A HANDLER
+							System.out.println("\n\n REPLYING to message FOUND DEVICE \n ------------------------------------------------------------------- \n "+device.toString()+" \n -------------------------------------------------------------------");
 							message.reply(device);
-							// WITHOUT a handler
-							//return device;
+
 						} else {
 							// HERE I need to return c
-							//routingContext.response().setStatusCode(404).end();
+							// TODO - Handle ERROR MESSAGE
 							message.reply(null);
-							// WITHOUT a handler
-							//return device;
+
 						}
 					} else {
 						// Something went wrong! NOT BASED ON THE KEY

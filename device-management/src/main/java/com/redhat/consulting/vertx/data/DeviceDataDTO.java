@@ -9,9 +9,9 @@ public class DeviceDataDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = 4279758586284541545L;
 
-	String id;
+	private String housePlanId;
 	
-	String sensorId;
+	private String sensor;
 
 	public DeviceDataDTO(){
 		
@@ -19,21 +19,21 @@ public class DeviceDataDTO implements Serializable{
 	
 	public DeviceDataDTO(String houdeHoldId, String sensor)   {
 		super();
-		this.id = houdeHoldId;
-		this.sensorId = sensor;
+		this.housePlanId = houdeHoldId;
+		this.sensor = sensor;
 	}
 
-	public String getId() {
-		return id;
+	public String getHousePlanId() {
+		return housePlanId;
 	}
 
-	public String getSensorId() {
-		return sensorId;
+	public String getSensor() {
+		return sensor;
 	}
 
 	@Override
 	public String toString() {
-		return "DeviceDataDTO [id=" + id + ", sensorId=" + sensorId + "]";
+		return "DeviceDataDTO [housePlanId=" + housePlanId + ", sensor=" + sensor + "]";
 	}
 	
 	
