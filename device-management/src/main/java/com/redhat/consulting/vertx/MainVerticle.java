@@ -207,23 +207,23 @@ public class MainVerticle extends AbstractVerticle {
 		});		
 		
         //ONLY RE-ACTIVATE FOR TESTING - HACKING
-		System.out.println("\n\n SENDING MESSAGE to #" + MainVerticle.DEVICE_DATA_EVENTS_ADDRESS);
-		
-		vertx.eventBus().send(MainVerticle.DEVICE_REGISTRATION_EVENTS_ADDRESS, createRegistrationPayload());
-		
-		
-		DeliveryOptions options = new DeliveryOptions();
-
-	    
-	    /* *********  Test withaction header - for increase */
-		options.addHeader(DEVICE_ACTION_HEADER, DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE.toString());
-	    vertx.eventBus().send(MainVerticle.DEVICE_ACTION_EVENTS_ADDRESS, 
-	    		              createDeviceDummyActionPayload(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, 17, 23),
-	    		              options);
-		
-		DeviceDataDTO deviceDetails = new DeviceDataDTO("kousourisHousehold", "bedroom-1");
-		
-		vertx.eventBus().send(MainVerticle.DEVICE_DATA_EVENTS_ADDRESS, Json.encodePrettily(deviceDetails));
+//		System.out.println("\n\n SENDING MESSAGE to #" + MainVerticle.DEVICE_DATA_EVENTS_ADDRESS);
+//		
+//		vertx.eventBus().send(MainVerticle.DEVICE_REGISTRATION_EVENTS_ADDRESS, createRegistrationPayload());
+//		
+//		
+//		DeliveryOptions options = new DeliveryOptions();
+//
+//	    
+//	    /* *********  Test withaction header - for increase */
+//		options.addHeader(DEVICE_ACTION_HEADER, DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE.toString());
+//	    vertx.eventBus().send(MainVerticle.DEVICE_ACTION_EVENTS_ADDRESS, 
+//	    		              createDeviceDummyActionPayload(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, 17, 23),
+//	    		              options);
+//		
+//		DeviceDataDTO deviceDetails = new DeviceDataDTO("kousourisHousehold", "bedroom-1");
+//		
+//		vertx.eventBus().send(MainVerticle.DEVICE_DATA_EVENTS_ADDRESS, Json.encodePrettily(deviceDetails));
 	}
 
 
