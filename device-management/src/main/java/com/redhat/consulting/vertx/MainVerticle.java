@@ -59,7 +59,7 @@ import io.vertx.core.shareddata.SharedData;
  * 		
  * Message expected format
  * {
-     "houseHoldId" : kousourisHousehold,
+     "housePlanId" : kousourisHousehold,
      "id" : "kitchen-1",
      "type" : "AIRCON",
      "action" : INCREASING,
@@ -71,7 +71,7 @@ import io.vertx.core.shareddata.SharedData;
    
    and for deactivate the header "TURNOFF_DEVICE"
    {
-     "houseHoldId" : kousourisHousehold,
+     "housePlanId" : kousourisHousehold,
      "id" : "kitchen-1",
      "type" : "AIRCON",
      "action" : NONE,
@@ -207,23 +207,23 @@ public class MainVerticle extends AbstractVerticle {
 		});		
 		
         //ONLY RE-ACTIVATE FOR TESTING - HACKING
-//		System.out.println("\n\n SENDING MESSAGE to #" + MainVerticle.DEVICE_DATA_EVENTS_ADDRESS);
-//		
-//		vertx.eventBus().send(MainVerticle.DEVICE_REGISTRATION_EVENTS_ADDRESS, createRegistrationPayload());
-//		
-//		
-//		DeliveryOptions options = new DeliveryOptions();
-//
-//	    
-//	    /* *********  Test withaction header - for increase */
-//		options.addHeader(DEVICE_ACTION_HEADER, DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE.toString());
-//	    vertx.eventBus().send(MainVerticle.DEVICE_ACTION_EVENTS_ADDRESS, 
-//	    		              createDeviceDummyActionPayload(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, 17, 23),
-//	    		              options);
-//		
-//		DeviceDataDTO deviceDetails = new DeviceDataDTO("kousourisHousehold", "bedroom-1");
-//		
-//		vertx.eventBus().send(MainVerticle.DEVICE_DATA_EVENTS_ADDRESS, Json.encodePrettily(deviceDetails));
+		System.out.println("\n\n SENDING MESSAGE to #" + MainVerticle.DEVICE_DATA_EVENTS_ADDRESS);
+		
+		vertx.eventBus().send(MainVerticle.DEVICE_REGISTRATION_EVENTS_ADDRESS, createRegistrationPayload());
+		
+		
+		DeliveryOptions options = new DeliveryOptions();
+
+	    
+	    /* *********  Test withaction header - for increase */
+		options.addHeader(DEVICE_ACTION_HEADER, DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE.toString());
+	    vertx.eventBus().send(MainVerticle.DEVICE_ACTION_EVENTS_ADDRESS, 
+	    		              createDeviceDummyActionPayload(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, 17, 23),
+	    		              options);
+		
+		DeviceDataDTO deviceDetails = new DeviceDataDTO("kousourisHousehold", "bedroom-1");
+		
+		vertx.eventBus().send(MainVerticle.DEVICE_DATA_EVENTS_ADDRESS, Json.encodePrettily(deviceDetails));
 	}
 
 
@@ -248,11 +248,11 @@ public class MainVerticle extends AbstractVerticle {
 				DeviceDTO devicesToRegister = Json.decodeValue(message.body(), DeviceDTO.class);
 						
 				// TODO - NEED TO CHANGE THIS TO PROCESS THE MESSAGE AS A STREAM
-				String householdId = devicesToRegister.getId();
+				String housePlanId = devicesToRegister.getId();
 					List<Device> devices = devicesToRegister.getDevices();
 					for (Device device : devices) {
 						registerDevice(generatedDeviceKey(devicesToRegister.getId(), device.getId()), 
-								new Device(householdId, device.getId(), device.getType(), device.getAction(), 
+								new Device(housePlanId, device.getId(), device.getType(), device.getAction(), 
 										device.getState(), device.getFromNumber(), device.getToNumber(), 
 										device.getTimeStart(), device.getActionSequence()));
 					}
@@ -460,11 +460,11 @@ public class MainVerticle extends AbstractVerticle {
 	}
 	
 	private String generatedDeviceKey(Device device) {
-		return generatedDeviceKey(device.getHouseHoldId(), device.getId());
+		return generatedDeviceKey(device.gethousePlanId(), device.getId());
 	}
 	
-	private String generatedDeviceKey(String houseHoldId, String deviceId) {
-		return houseHoldId+DEVICES_ID_SEPARATOR+deviceId;
+	private String generatedDeviceKey(String housePlanId, String deviceId) {
+		return housePlanId+DEVICES_ID_SEPARATOR+deviceId;
 	}
 
 	
@@ -485,7 +485,7 @@ public class MainVerticle extends AbstractVerticle {
 						if (device != null) {
 							// HERE I need to return the existing device						
 							
-							System.out.println("\n\n REPLYING to message FOUND DEVICE \n ------------------------------------------------------------------- \n "+device.toString()+" \n -------------------------------------------------------------------");
+							System.out.println("\n\n REPLYING to message FOUND DEVICE \n ------------------------------------------------------------------- \n "+Json.encodePrettily(device)+" \n -------------------------------------------------------------------");
 							message.reply(device);
 
 						} else {

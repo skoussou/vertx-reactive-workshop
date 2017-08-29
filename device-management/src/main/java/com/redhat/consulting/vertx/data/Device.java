@@ -15,7 +15,7 @@ public class Device implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private String houseHoldId;
+	private String housePlanId;
 	
 	private String id;
 
@@ -37,10 +37,10 @@ public class Device implements Serializable {
 
 
 	
-	public Device(String houseHoldId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, Integer fromNumber,
+	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, Integer fromNumber,
 			Integer toNumber, long timeStart, long actionSequence) {
 		super();
-		this.houseHoldId = houseHoldId;
+		this.housePlanId = housePlanId;
 		this.id = id;
 		this.type = type;
 		this.action = action;
@@ -57,8 +57,8 @@ public class Device implements Serializable {
 
 	
 	
-	public String getHouseHoldId() {
-		return houseHoldId;
+	public String gethousePlanId() {
+		return housePlanId;
 	}
 
 	public String getId() {
@@ -97,7 +97,7 @@ public class Device implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Device [houseHoldId=" + houseHoldId + ", id=" + id + ", type=" + type + ", action=" + action
+		return "Device [housePlanId=" + housePlanId + ", id=" + id + ", type=" + type + ", action=" + action
 				+ ", state=" + state + ", fromNumber=" + fromNumber + ", toNumber=" + toNumber + ", timeStart="
 				+ timeStart + ", actionSequence=" + actionSequence + "]";
 	}
@@ -106,7 +106,7 @@ public class Device implements Serializable {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((houseHoldId == null) ? 0 : houseHoldId.hashCode());
+		result = prime * result + ((housePlanId == null) ? 0 : housePlanId.hashCode());
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
@@ -120,10 +120,10 @@ public class Device implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Device other = (Device) obj;
-		if (houseHoldId == null) {
-			if (other.houseHoldId != null)
+		if (housePlanId == null) {
+			if (other.housePlanId != null)
 				return false;
-		} else if (!houseHoldId.equals(other.houseHoldId))
+		} else if (!housePlanId.equals(other.housePlanId))
 			return false;
 		if (id == null) {
 			if (other.id != null)
