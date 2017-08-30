@@ -121,6 +121,7 @@ public class MainVerticle extends AbstractVerticle {
 				final DeviceStatus deviceStatus = Json.decodeValue(reply.result().body().toString(),
 						DeviceStatus.class);
 				future.complete(deviceStatus);
+				logger.debug("Got device status");
 			} else {
 				reply.cause().printStackTrace();
 				future.fail("No reply from device management service");

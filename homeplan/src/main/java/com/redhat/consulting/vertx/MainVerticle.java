@@ -95,11 +95,13 @@ public class MainVerticle extends AbstractVerticle {
 			HomePlan homePlan = futureHomePlan.result();
 			if (homePlan != null) {
 				message.reply(Json.encode(homePlan));
+				logger.debug("Replied to message successfully");
 			} else {
+				logger.debug("Homeplan not found, replying failure");
 				message.fail(404, "Not found");
 			}
 		}, Future.future().setHandler(handler -> {
-			handler.cause().printStackTrace();
+			logger.error("Homeplan consumer error, replying failure", handler.cause());
 			message.fail(500, "Homeplan consumer error");
 		}));
 	}
@@ -108,83 +110,27 @@ public class MainVerticle extends AbstractVerticle {
 
 	private void getAll(RoutingContext routingContext) {
 		SharedData sd = vertx.sharedData();
+		logger.debug("Getting all homeplan ids available");
 		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().get(SET_ID, rh -> {
 					if (rh.succeeded() && rh.result()!=null) {
+						logger.debug("Returning {} ", Json.encodePrettily(new HomePlanIds(rh.result())));
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
 								.end(Json.encodePrettily(new HomePlanIds(rh.result())));
 					} else {
+						logger.debug("Returning empty response");
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
 								.end(Json.encodePrettily(new HomePlanIds()));
 					}
 				});
 			} else {
+				logger.error("Error getting homeplan ids", res.cause());
 				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
 						.end(Json.encodePrettily(new HomePlanIds()));
 			}
 		});
 	}
-
-//	private void getAll(RoutingContext routingContext) {
-//	 SharedData sd = vertx.sharedData();
-//	
-//	 sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
-//	 if (res.succeeded()) {
-//	 res.result().get(SET_ID, rh -> {
-//	 if (rh.succeeded()) {
-//	 Set<String> indexes = rh.result();
-//	 // create final list
-//	 List<HomePlan> homePlans = new ArrayList<HomePlan>();
-//	 System.out.println("Indexes size: " + indexes.size());
-//	 if (indexes != null && !indexes.isEmpty()) {
-//	 sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, arEntries -> {
-//	 System.out.println("getClusterWideMap " + HOMEPLANS_MAP);
-//	
-//	 if (arEntries.succeeded()) {
-//	 System.out.println("Iterate indexes");
-//	
-//	 // get all Home plans
-//	 for (String id : indexes) {
-//	 System.out.println("Id " + id);
-//	
-//	 arEntries.result().get(id, arHP -> {
-//	
-//	 if (arHP.succeeded()) {
-//	 HomePlan homePlan = arHP.result();
-//	 System.out.println("HomePlan obtained " + homePlan);
-//	
-//	 if (homePlan != null) {
-//	 homePlans.add(homePlan);
-//	 System.out.println("HomePlan added " + homePlan);
-//	 }
-//	
-//	 } else {
-//	 // Something went wrong!
-//	 routingContext.fail(500);
-//	 }
-//	 });
-//	 }
-//	 } else {
-//	 // Something went wrong!
-//	 routingContext.fail(500);
-//	 }
-//	 System.out.println("Returning homeplans: " + homePlans.size());
-//	
-//	 routingContext.response().putHeader("content-type", "application/json;
-//	 charset=utf-8")
-//	 .end(Json.encodePrettily(homePlans));
-//	
-//	 });
-//	 }
-//	 routingContext.response().putHeader("content-type", "application/json;
-//	 charset=utf-8")
-//	 .end(Json.encodePrettily(homePlans));
-//	 }
-//	 });
-//	 }
-//	 });
-//	 }
 
 	private void getOne(RoutingContext routingContext) {
 		SharedData sd = vertx.sharedData();
@@ -299,18 +245,22 @@ public class MainVerticle extends AbstractVerticle {
 	// FIXME Concurrency... what if were adding several homeplans at the same time? Lock should be done
 	private Future<String> addHomePlan(SharedData sd, String id, HomePlan homePlan) {
 		Future<String> future = Future.future();
+		logger.debug("Adding homeplan {}", Json.encodePrettily(homePlan));
 		sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().put(id, homePlan, ar -> {
 					if (ar.succeeded()) {
 						future.complete("HomePlan added successfully");
+						logger.debug("HomePlan added successfully");
 					} else {
 						// Something went wrong!
+						logger.error("Error adding homeplan", ar.cause());
 						future.fail(ar.cause());
 					}
 				});
 			} else {
 				// Something went wrong!
+				logger.error("Error adding homeplan", res.cause());
 				future.fail(res.cause());
 			}
 		});
@@ -320,6 +270,7 @@ public class MainVerticle extends AbstractVerticle {
 	// FIXME Concurrency... what if were adding several ids at the same time? Lock should be done
 	private Future<String> addIdToIndex(SharedData sd, String id) {
 		Future<String> future = Future.future();
+		logger.debug("Adding homeplan id {} to index table", id);
 		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().get(SET_ID, rh -> {
@@ -333,19 +284,23 @@ public class MainVerticle extends AbstractVerticle {
 						res.result().put(SET_ID, indexes, rhids -> {
 							if (rhids.succeeded()) {
 								future.complete("Id added successfully");
+								logger.debug("Id added successfully");
 							} else {
 								// Something went wrong!
 								future.fail(rhids.cause());
+								logger.error("Error adding homeplan id", rhids.cause());
 							}
 						});
 					} else {
 						// Something went wrong!
+						logger.error("Error adding homeplan id", rh.cause());
 						future.fail(rh.cause());
 					}
 				});
 				;
 			} else {
 				// Something went wrong!
+				logger.error("Error adding homeplan id", res.cause());
 				future.fail(res.cause());
 			}
 		});
@@ -356,12 +311,15 @@ public class MainVerticle extends AbstractVerticle {
 		Future<String> future = Future.future();
 		// create devices message, that is, homeplan without sensors
 		Devices message = new Devices(homePlan.getId(), homePlan.getDevices());
+		logger.debug("Sending event to address {} to register devices", DEVICE_REGISTRATION_EVENTS_ADDRESS);
 		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {
 			if (reply.succeeded()) {
 				future.complete("Received reply");
+				logger.debug("Devices registered");
 			} else {
 				future.fail("No reply from Device management service");
 				//future.complete("No reply.. but mocking OK");
+				logger.error("No reply from Device management service", reply.cause());
 			}
 		});
 		return future;
