@@ -50,7 +50,7 @@ public class MainVerticle extends AbstractVerticle {
 			Future<List<String>> futureGetIds = getHomePlanIds();
 			futureGetIds.compose(s1 -> {
 				if (s1 != null && !s1.isEmpty()) {
-					logger.info("Getting homeplan details for {} homeplans", s1.size());
+					logger.info("Getting homeplan details for {0} homeplans", s1.size());
 					for (String homeplan : s1) {
 						Future<HomePlan> futureHomeplan = getHomePlan(homeplan);
 						futureHomeplan.compose(s2 -> {
@@ -99,10 +99,10 @@ public class MainVerticle extends AbstractVerticle {
 		if (sl != null) {
 			// publish ambiance data
 			AmbianceEvent ae = new AmbianceEvent(homePlan.getId(), sl);
-			logger.info("Publishing in address {} event {}", AMBIANCE_DATA_EVENTS_ADDRESS, Json.encodePrettily(ae));
+			logger.info("Publishing in address {0} event {1}", AMBIANCE_DATA_EVENTS_ADDRESS, Json.encodePrettily(ae));
 			vertx.eventBus().publish(AMBIANCE_DATA_EVENTS_ADDRESS, Json.encode(ae));
 		} else {
-			logger.warn("No matching sensor with id {} in homeplan {}", deviceStatus.getId(), homePlan.getId());
+			logger.warn("No matching sensor with id {0} in homeplan {1}", deviceStatus.getId(), homePlan.getId());
 		}
 
 	}
@@ -114,7 +114,7 @@ public class MainVerticle extends AbstractVerticle {
 
 	private Future<DeviceStatus> getDeviceStatus(String homeplanId, String sensorId) {
 		Future<DeviceStatus> future = Future.future();
-		logger.debug("Sending event to address {} to get device status for id {}-{}", DEVICE_DATA_EVENTS_ADDRESS,
+		logger.debug("Sending event to address {0} to get device status for id {1}-{2}", DEVICE_DATA_EVENTS_ADDRESS,
 				homeplanId, sensorId);
 		vertx.eventBus().send(DEVICE_DATA_EVENTS_ADDRESS, Json.encode(new Sensor(homeplanId, sensorId)), reply -> {
 			if (reply.succeeded()) {
@@ -132,7 +132,7 @@ public class MainVerticle extends AbstractVerticle {
 
 	private Future<HomePlan> getHomePlan(String homeplanId) {
 		Future<HomePlan> future = Future.future();
-		logger.debug("Sending event to address {} to get homeplan details for id {}", HOMEPLANS_EVENTS_ADDRESS,
+		logger.debug("Sending event to address {0} to get homeplan details for id {1}", HOMEPLANS_EVENTS_ADDRESS,
 				homeplanId);
 		vertx.eventBus().send(HOMEPLANS_EVENTS_ADDRESS, homeplanId, reply -> {
 			if (reply.succeeded()) {
