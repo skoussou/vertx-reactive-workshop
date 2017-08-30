@@ -54,7 +54,7 @@ public class MainVerticle extends AbstractVerticle {
 					for (String homeplan : s1) {
 						Future<HomePlan> futureHomeplan = getHomePlan(homeplan);
 						futureHomeplan.compose(s2 -> {
-							logger.debug("Getting homeplan devices status");
+							logger.info("Getting homeplan devices status");
 							if (s2.getSensorLocations() != null && !s2.getSensorLocations().isEmpty()) {
 								for (SensorLocation sl : s2.getSensorLocations()) {
 									Future<DeviceStatus> futureDeviceStatus = getDeviceStatus(s2.getId(), sl.getId());
@@ -114,14 +114,14 @@ public class MainVerticle extends AbstractVerticle {
 
 	private Future<DeviceStatus> getDeviceStatus(String homeplanId, String sensorId) {
 		Future<DeviceStatus> future = Future.future();
-		logger.debug("Sending event to address {0} to get device status for id {1}-{2}", DEVICE_DATA_EVENTS_ADDRESS,
+		logger.info("Sending event to address {0} to get device status for id {1}-{2}", DEVICE_DATA_EVENTS_ADDRESS,
 				homeplanId, sensorId);
 		vertx.eventBus().send(DEVICE_DATA_EVENTS_ADDRESS, Json.encode(new Sensor(homeplanId, sensorId)), reply -> {
 			if (reply.succeeded()) {
 				final DeviceStatus deviceStatus = Json.decodeValue(reply.result().body().toString(),
 						DeviceStatus.class);
 				future.complete(deviceStatus);
-				logger.debug("Got device status");
+				logger.info("Got device status");
 			} else {
 				reply.cause().printStackTrace();
 				future.fail("No reply from device management service");
@@ -132,13 +132,13 @@ public class MainVerticle extends AbstractVerticle {
 
 	private Future<HomePlan> getHomePlan(String homeplanId) {
 		Future<HomePlan> future = Future.future();
-		logger.debug("Sending event to address {0} to get homeplan details for id {1}", HOMEPLANS_EVENTS_ADDRESS,
+		logger.info("Sending event to address {0} to get homeplan details for id {1}", HOMEPLANS_EVENTS_ADDRESS,
 				homeplanId);
 		vertx.eventBus().send(HOMEPLANS_EVENTS_ADDRESS, homeplanId, reply -> {
 			if (reply.succeeded()) {
 				final HomePlan homePlan = Json.decodeValue(reply.result().body().toString(), HomePlan.class);
 				future.complete(homePlan);
-				logger.debug("Homeplan returned");
+				logger.info("Homeplan returned: {0}", Json.encodePrettily(homePlan));
 			} else {
 				logger.error("No reply from Homeplan service", reply.cause());
 				future.fail("No reply from Homeplan service");
@@ -149,12 +149,12 @@ public class MainVerticle extends AbstractVerticle {
 
 	private Future<List<String>> getHomePlanIds() {
 		Future<List<String>> future = Future.future();
-		logger.debug("Getting all homeplans ids");
+		logger.info("Getting all homeplans ids");
 		HttpRequest<JsonObject> request = client.get(8080, "localhost", "/homeplan").as(BodyCodec.jsonObject());
 		request.send(ar -> {
 			if (ar.succeeded()) {
 				future.complete(ar.result().body().getJsonArray("ids").getList());
-				logger.debug("Homeplan ids returned");
+				logger.info("Homeplan ids returned");
 			} else {
 				logger.error("Could not get Homeplan ids", ar.cause());
 				future.fail("Could not get Homeplan ids");
