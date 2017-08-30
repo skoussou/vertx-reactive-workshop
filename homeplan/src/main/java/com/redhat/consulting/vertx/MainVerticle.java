@@ -11,6 +11,8 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.Json;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.core.shareddata.SharedData;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
@@ -41,19 +43,27 @@ public class MainVerticle extends AbstractVerticle {
 	private static final String DEVICE_REGISTRATION_EVENTS_ADDRESS = "device-reg";
 	
 	private static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
-
+	
+	// logger
+	
+	private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
 
 	@Override
 	public void start() {
-
+		startHttpServer();		
+		startHomeplanEventBusProvider();
+	}
+	
+	private void startHttpServer() {
+		
 		// * 1 (simple http server)
 
 		// vertx.createHttpServer().requestHandler(req ->
 		// req.response().end("hello")).listen(8080);
 
 		// * 2 (adding router)
-
+		
 		Router router = Router.router(vertx);
 
 		router.route(ROOT_PATH + "*").handler(BodyHandler.create());
@@ -65,15 +75,20 @@ public class MainVerticle extends AbstractVerticle {
 
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
 		
+		logger.info("Http router has started");
+	}
+	
+	private void startHomeplanEventBusProvider() {
 		vertx.eventBus().<String>consumer(HOMEPLANS_EVENTS_ADDRESS, message -> {
-			reply(message);
+			replyWithHomeplan(message);
 		});
-		
+		logger.info("Homeplans event bus ready");
+
 	}
 
 	// Methods used by event bus consumer
 	
-	private void reply(Message<String> message) {
+	private void replyWithHomeplan(Message<String> message) {
 		SharedData sd = vertx.sharedData();
 		Future<HomePlan> futureHomePlan = getHomePlan(sd, message.body());
 		futureHomePlan.compose(s -> {
@@ -259,18 +274,22 @@ public class MainVerticle extends AbstractVerticle {
 
 	private Future<HomePlan> getHomePlan(SharedData sd, String id) {
 		Future<HomePlan> future = Future.future();
+		logger.debug("Getting homeplan details for id {}", id);
 		sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().get(id, ar -> {
 					if (ar.succeeded()) {
 						future.complete(ar.result());
+						logger.debug("Homeplan returned");
 					} else {
 						// Something went wrong!
+						logger.error("Error getting Homeplan", res.cause());
 						future.fail(ar.cause());
 					}
 				});
 			} else {
 				// Something went wrong!
+				logger.error("Error getting Homeplan", res.cause());
 				future.fail(res.cause());
 			}
 		});
