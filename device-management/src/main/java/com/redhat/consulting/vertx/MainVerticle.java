@@ -371,12 +371,7 @@ public class MainVerticle extends AbstractVerticle {
 		sd.<String, Device>getClusterWideMap(DEVICES_MAP, res -> {
 			if (res.succeeded()) {
 				// SUCCEEDED to find the DEVICES SHARED MAP
-
-				System.out.println("<-########################~>");
-				System.out.println(Json.encodePrettily(deviceActionable));
-				String key = generatedDeviceKey(deviceActionable);
-				System.out.println("<-###########"+key+"#############->");
-				
+			
 				// GETTING THE DEVICE
 				res.result().get(generatedDeviceKey(deviceActionable), ar -> {
 					if (ar.succeeded()) {
