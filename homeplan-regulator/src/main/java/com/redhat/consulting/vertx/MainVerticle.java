@@ -67,7 +67,7 @@ public class MainVerticle extends AbstractVerticle {
 							System.out.println("Finding match between ambiance data ["+ambianceData.getHousePlanId()+"-"+ambianceData.getSensorLocation().getId()
 									+"] and sensor location ["+ambianceData.getHousePlanId()+"-"+sl.getId()+"]");
 							
-							if (ambianceData.getSensorLocation().getId()!= null && sl.getId() != null && ambianceData.getSensorLocation().equals(sl.getId())){
+							if (ambianceData.getSensorLocation().getId()!= null && sl.getId() != null && ambianceData.getSensorLocation().getId().equals(sl.getId())){
 								
 								String msgPayload = null;
 								DEVICE_MANAGEMENT_ACTION headerAction = DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE;
@@ -89,19 +89,19 @@ public class MainVerticle extends AbstractVerticle {
 									System.out.println("Action NOW: "+DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE);
 									System.out.println("Action NOW: "+DEVICE_ACTION.INCREASING);
 									headerAction = DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE;
-									msgPayload = createDeviceManagementActionPayload(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, DEVICE_TYPE.AIRCON, 16, 23, TimeUtils.timeInMillisNow(), 1L);
+									msgPayload = createDeviceManagementActionPayload(ambianceData.getHousePlanId(), sl.getId(), DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, DEVICE_TYPE.AIRCON, 16, 23, TimeUtils.timeInMillisNow(), 1L);
 									break;
 								case 2:
 									System.out.println("Action NOW: "+DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE);
 									headerAction = DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE;
-									msgPayload = createDeviceManagementActionPayload(DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE, DEVICE_ACTION.NONE, DEVICE_TYPE.AIRCON, 0, 0, TimeUtils.timeInMillisNow(), 1L);
+									msgPayload = createDeviceManagementActionPayload(ambianceData.getHousePlanId(), sl.getId(), DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE, DEVICE_ACTION.NONE, DEVICE_TYPE.AIRCON, 0, 0, TimeUtils.timeInMillisNow(), 1L);
 
 									break;
 								case 3:
 									System.out.println("Action NOW: "+DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE);
 									System.out.println("Action NOW: "+DEVICE_ACTION.DECREASING);
 									headerAction = DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE;
-									msgPayload = createDeviceManagementActionPayload(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.DECREASING, DEVICE_TYPE.AIRCON, 25, 21, TimeUtils.timeInMillisNow(), 1L);
+									msgPayload = createDeviceManagementActionPayload(ambianceData.getHousePlanId(), sl.getId(), DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.DECREASING, DEVICE_TYPE.AIRCON, 25, 21, TimeUtils.timeInMillisNow(), 1L);
 
 									break;
 
@@ -135,12 +135,12 @@ public class MainVerticle extends AbstractVerticle {
   }
 
   
-  private String createDeviceManagementActionPayload(DEVICE_MANAGEMENT_ACTION deviceManagement, DEVICE_ACTION action, DEVICE_TYPE type,
+  private String createDeviceManagementActionPayload(String homePlanId, String sensorLocationNAME, DEVICE_MANAGEMENT_ACTION deviceManagement, DEVICE_ACTION action, DEVICE_TYPE type,
 		  int from, int to, long timeInMillisNow, long c) {
-	  if (action.equals(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE)) {
-		 return  Json.encodePrettily((new DeviceActionDTO("kousourisHousehold", "bedroom-1", type, action, DEVICE_STATE.ON, from, to, timeInMillisNow, timeInMillisNow)));
+	  if (deviceManagement.equals(DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE)) {
+		 return  Json.encodePrettily((new DeviceActionDTO(homePlanId, sensorLocationNAME, type, action, DEVICE_STATE.ON, from, to, timeInMillisNow, timeInMillisNow)));
 	  } else {
-		  return  Json.encodePrettily((new DeviceActionDTO("kousourisHousehold", "bedroom-1", type, action, DEVICE_STATE.OFF, from, to, timeInMillisNow, timeInMillisNow)));
+		  return  Json.encodePrettily((new DeviceActionDTO(homePlanId, sensorLocationNAME, type, action, DEVICE_STATE.OFF, from, to, timeInMillisNow, timeInMillisNow)));
 	  }
 
   }

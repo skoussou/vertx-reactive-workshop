@@ -19,11 +19,11 @@ public class SensorLocation implements Serializable {
 
 	private String id;
 
-	private DEVICE_TYPE type;
+	private String type;
 	
 	private int temperature;
 
-	public SensorLocation(String id, DEVICE_TYPE type, int temperature) {
+	public SensorLocation(String id, String type, int temperature) {
 		super();
 		this.id = id;
 		this.type = type;
@@ -42,11 +42,11 @@ public class SensorLocation implements Serializable {
 		this.id = id;
 	}
 
-	public DEVICE_TYPE getType() {
+	public String getType() {
 		return type;
 	}
 
-	public void setType(DEVICE_TYPE type) {
+	public void setType(String type) {
 		this.type = type;
 	}
 

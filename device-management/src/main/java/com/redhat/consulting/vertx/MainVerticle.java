@@ -289,6 +289,10 @@ public class MainVerticle extends AbstractVerticle {
 				DEVICE_MANAGEMENT_ACTION action = DEVICE_MANAGEMENT_ACTION.valueOf(message.headers().get(DEVICE_ACTION_HEADER));
 				Device deviceActionable = Json.decodeValue(message.body(), Device.class);
 				
+				
+				System.out.println("<---------------------------------------------------->");
+				System.out.println(Json.encodePrettily(deviceActionable));
+				System.out.println("<---------------------------------------------------->");
 				  switch (action) {
 				    case ACTIVATE_DEVICE:
 				    	System.out.println("ACTION: "+ DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE +" & START "+deviceActionable.getAction()+" on DEVICE: "+ generatedDeviceKey(deviceActionable));
@@ -368,9 +372,17 @@ public class MainVerticle extends AbstractVerticle {
 			if (res.succeeded()) {
 				// SUCCEEDED to find the DEVICES SHARED MAP
 
+				System.out.println("<-########################~>");
+				System.out.println(Json.encodePrettily(deviceActionable));
+				String key = generatedDeviceKey(deviceActionable);
+				System.out.println("<-###########"+key+"#############->");
+				
 				// GETTING THE DEVICE
 				res.result().get(generatedDeviceKey(deviceActionable), ar -> {
 					if (ar.succeeded()) {
+						
+						System.out.println("DEVICE RETRIEVED FROM SHARED MAP --> "+ar.result());
+						
 						// HERE IT SHOULD HAVE BEEN RETRIEVED based on the key
 						System.out.println("RETRIEVED DEVICE FROM SHARED MAP: "+ (res.result() != null ? generatedDeviceKey(ar.result()) : "NONE FOUND") +" AS : "+Json.encodePrettily(ar.result()));
 						
