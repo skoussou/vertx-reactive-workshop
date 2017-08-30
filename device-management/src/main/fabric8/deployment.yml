@@ -1,0 +1,15 @@
+spec:
+  template:
+    spec:
+      containers:
+        - name: vertx
+          env:
+            - name: OPENSHIFT_KUBE_PING_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: JAVA_OPTIONS
+              value: '-Dvertx.cacheDirBase=/tmp -Dvertx.hazelcast.config=classpath:openshift/cluster-config.xml -Djava.net.preferIPv4Stack=true'
+            - name: JAVA_ARGS
+              value: '-cluster'
