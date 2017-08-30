@@ -23,7 +23,7 @@ public class MainVerticle extends AbstractVerticle {
 
 	private static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
 	
-	public static final String AMBIANBCE_DATA_ADDRESS = "ambiance-action";
+	public static final String AMBIANBCE_DATA_ADDRESS = "ambiance-data";
 	
 	public static final String DEVICE_ACTION_EVENTS_ADDRESS = "device-action";
 	
