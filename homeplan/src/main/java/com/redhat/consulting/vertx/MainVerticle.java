@@ -313,6 +313,7 @@ public class MainVerticle extends AbstractVerticle {
 		Devices message = new Devices(homePlan.getId(), homePlan.getDevices());
 		logger.info("Sending event to address {0} to register devices", DEVICE_REGISTRATION_EVENTS_ADDRESS);
 		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message));
+		future.complete("Device registration sent");
 		// if using send/reply in device-management
 //		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {
 //			if (reply.succeeded()) {
