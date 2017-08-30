@@ -311,17 +311,19 @@ public class MainVerticle extends AbstractVerticle {
 		Future<String> future = Future.future();
 		// create devices message, that is, homeplan without sensors
 		Devices message = new Devices(homePlan.getId(), homePlan.getDevices());
-		logger.info("Sending event to address {} to register devices", DEVICE_REGISTRATION_EVENTS_ADDRESS);
-		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {
-			if (reply.succeeded()) {
-				future.complete("Received reply");
-				logger.info("Devices registered");
-			} else {
-				future.fail("No reply from Device management service");
-				//future.complete("No reply.. but mocking OK");
-				logger.error("No reply from Device management service", reply.cause());
-			}
-		});
+		logger.info("Sending event to address {0} to register devices", DEVICE_REGISTRATION_EVENTS_ADDRESS);
+		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message));
+		// if using send/reply in device-management
+//		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {
+//			if (reply.succeeded()) {
+//				future.complete("Received reply");
+//				logger.info("Devices registered");
+//			} else {
+//				future.fail("No reply from Device management service");
+//				//future.complete("No reply.. but mocking OK");
+//				logger.error("No reply from Device management service", reply.cause());
+//			}
+//		});
 		return future;
 	}
 }
