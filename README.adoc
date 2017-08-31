@@ -12,37 +12,32 @@ FOLLOWED by 15 MINUTES explain the solution
 
 - What is and how to use the EventBus of VertX
 - EventBus across multiple MIcroservice Nodes (requires clustering)
-- You will have clustering configuration and give command to start with cluster
+- Clustering configuration is provided and mavent-vertx plugn command to start with cluster is given
 
 == Organizers
 
-.Ordered
-.. Provide solution from - LAB-1 in branch LAB-1 
-.. Pre-Requisites: and cluster it (infinispan) --> PROVIDE as part of the INITIAL version of LAB 1 Solution
-
+. Provide solution from - LAB-1 in branch LAB-1 
+. Pre-Requisites: and cluster it (infinispan) --> PROVIDE as part of the INITIAL version of LAB 1 Solution
 
 
 == PARTICIPANTS
-.Ordered
-.. clone/unzip "ReactiveVertX Branch - LAB 1"
-.. Create Content for verticles in _device-management_ service
-  ... consume: Messages from #device-reg on the bus and complete register Device action
-  ... ADD the devices into a shared-map (as in previous lab point ....) --WE WILL PROVIDE METHOD FOR THIS
-  ... Log operation on console??? WE WILL PROVIDE METHOD FOR THIS THEY JUST NEED TO PUT THE LOGGING
-
-.. Create Content for verticles in _*homeplan*_
-  ...send: Messages to #device-reg on the bus (REMOVE DUMMY IMPLEMENTATION and implement content of sendDevicesRegistration method
-
-TESTS
-   - Register HomePlan and seeing on console the devices being registered (give REST Calls)
-
-   
-Run outside OCP
+.clone/unzip "ReactiveVertX Branch - LAB 1"
+.Run outside OCP
 .Maven Command To Run VertX outside OCP
 ----
 mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
-    
+.Create Content for verticles in _device-management_ service
+  .. consume: Messages from #device-reg on the bus and complete register Device action
+  .. ADD the devices into a shared-map (as in previous lab point ....) --WE WILL PROVIDE METHOD FOR THIS
+  .. Log operation on console??? WE WILL PROVIDE METHOD FOR THIS THEY JUST NEED TO PUT THE LOGGING
+
+.Create Content for verticles in _*homeplan*_
+  .. send: Messages to #device-reg on the bus (REMOVE DUMMY IMPLEMENTATION and implement content of sendDevicesRegistration method
+
+.TESTS
+   .. Register HomePlan and seeing on console the devices being registered (give REST Calls)
+
 
 
 = LAB 2
