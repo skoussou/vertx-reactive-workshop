@@ -19,8 +19,9 @@ FOLLOWED by 15 MINUTES explain the solution
 == Organizers
 
 . STEP 1     (ALL steps/names provided) Creatd a vertx project (using mvn archetype) 
-----
+
 [source,perl]
+----
 mvn io.fabric8:vertx-maven-plugin:1.0.5:setup -DprojectGroupId=io.vertx.microservice -DprojectArtifactId=hello-consumer-microservice-http -Dverticle=io.vertx.book.http.HelloConsumerMicroservice -Ddependencies=web
 ----
 . STEP 2      (ALL steps/names provided) Review Verticle 
@@ -45,8 +46,8 @@ mvn io.fabric8:vertx-maven-plugin:1.0.5:setup -DprojectGroupId=io.vertx.microser
     ..  [REST] [POST/PUT/GET] /homeplan 
 . TESTS
 Run Vert.X outside OCP with vertx-maven-plugin
-----
 [source,perl]
+----
   mvn compile vertx:run"
 ----
 
