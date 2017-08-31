@@ -22,6 +22,7 @@ FOLLOWED by 15 MINUTES explain the solution
 
 == PARTICIPANTS
 .clone/unzip "ReactiveVertX Branch - LAB 1"
+
 .Run outside OCP
 .Maven Command To Run VertX outside OCP
 ----
@@ -39,8 +40,6 @@ mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
    .. Register HomePlan and seeing on console the devices being registered (give REST Calls)
 
 
-
-= LAB 2
 
 = LAB 3
 
