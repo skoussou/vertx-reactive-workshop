@@ -8,13 +8,13 @@ This is a short description of the scenario we will be working throughout the la
 
 It’s going to be a fake home appliance IOT management app, where we will be able to regulate the temperature in different rooms at our home. The application is composed of a set of microservices:
 
-=== The homeplan - this is a service which allows home owners to register and review their homeplan providing the temperature in each of the rooms in their house and the heat regulating applicances in each room. 
+* The *_homeplan_* - this is a service which allows home owners to register and review their homeplan providing the temperature in each of the rooms in their house and the heat regulating applicances in each room. 
 
-=== The device management - this is a component which receives registration and update requests on the devices.
+* The *_device management_* - this is a component which receives registration and update requests on the devices.
 
-=== The sensor generator - this is a ficticious service emitting every 20 secs an event indicating the room temperature dependent on the state of the heating device (ON/OFF and INCREASING/DECREASING temperature)
+*  The *_sensor generator_* - this is a ficticious service emitting every 20 secs an event indicating the room temperature dependent on the state of the heating device (ON/OFF and INCREASING/DECREASING temperature)
 
-=== The homeplan regulator - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
+* The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
 
 = LAB 2
