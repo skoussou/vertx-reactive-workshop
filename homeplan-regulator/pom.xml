@@ -70,7 +70,49 @@
   </dependencies>
 
    
-    <build>
+   <profiles>
+   <profile>
+     <id>local</id>
+         <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <artifactId>maven-compiler-plugin</artifactId>
+          <version>3.5.1</version>
+          <configuration>
+            <source>1.8</source>
+            <target>1.8</target>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+    
+    <plugins>
+      <plugin>
+        <groupId>io.fabric8</groupId>
+        <artifactId>vertx-maven-plugin</artifactId>
+        <version>${fabric8-vertx-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>vmp</id>
+            <goals>
+              <goal>initialize</goal>
+              <goal>package</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <redeploy>true</redeploy>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+     
+   </profile>
+   
+   <profile>
+     <id>openshift</id>
+         <build>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -119,7 +161,9 @@
       </plugin>
     </plugins>
   </build>
-  
+   </profile>
+   
+   </profiles>
   
   
 

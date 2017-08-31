@@ -153,53 +153,53 @@ public class MainVerticle extends AbstractVerticle {
 	private Future<List<String>> getHomePlanIds() {
 		Future<List<String>> future = Future.future();
 		logger.info("Getting all homeplans ids");
-		WebClient client = WebClient.create(vertx);
-		HttpRequest<JsonObject> request = client.get(8080, "localhost", "/homeplan").as(BodyCodec.jsonObject());
-		request.send(response -> {
-			if (response.succeeded()) {
-				future.complete(response.result().body().getJsonArray("ids").getList());
-				logger.info("Homeplan ids returned");
-			} else {
-				logger.error("Could not get Homeplan ids", response.cause());
-				future.fail("Could not get Homeplan ids");
-			}
-			// Dont' forget to release the service
-		});
+//		WebClient client = WebClient.create(vertx);
+//		HttpRequest<JsonObject> request = client.get(8080, "localhost", "/homeplan").as(BodyCodec.jsonObject());
+//		request.send(response -> {
+//			if (response.succeeded()) {
+//				future.complete(response.result().body().getJsonArray("ids").getList());
+//				logger.info("Homeplan ids returned");
+//			} else {
+//				logger.error("Could not get Homeplan ids", response.cause());
+//				future.fail("Could not get Homeplan ids");
+//			}
+//			// Dont' forget to release the service
+//		});
 		
 		// UNCOMMENT FOR OCP
 
-//		ServiceDiscovery discovery = ServiceDiscovery.create(vertx);
-//	    discovery.registerServiceImporter(new KubernetesServiceImporter(), new JsonObject().put("namespace", "workshop"));
-//
-//		discovery.getRecord(r -> r.getName().equals("homeplan"), ar -> {
-//			logger.info("Getting record for homeplan service endpoint");
-//
-//			if (ar.succeeded()) {
-//				if (ar.result()!=null) {
-//					// Retrieve the service reference
-//					ServiceReference reference = discovery.getReference(ar.result());
-//					// Retrieve the service object
-//					WebClient client = reference.getAs(WebClient.class);
-//
-//					// You need to path the complete path
-//					HttpRequest<JsonObject> request = client.get("/homeplan").as(BodyCodec.jsonObject());
-//					request.send(response -> {
-//						if (response.succeeded()) {
-//							future.complete(response.result().body().getJsonArray("ids").getList());
-//							logger.info("Homeplan ids returned");
-//						} else {
-//							logger.error("Could not get Homeplan ids", response.cause());
-//							future.fail("Could not get Homeplan ids");
-//						}
-//						// Dont' forget to release the service
-//						reference.release();
-//					});
-//				}
-//			} else {
-//				logger.error("Could not discover homeplan service", ar.cause());
-//				future.fail(ar.cause());
-//			}
-//		});
+		ServiceDiscovery discovery = ServiceDiscovery.create(vertx);
+	    discovery.registerServiceImporter(new KubernetesServiceImporter(), new JsonObject().put("namespace", "workshop"));
+
+		discovery.getRecord(r -> r.getName().equals("homeplan"), ar -> {
+			logger.info("Getting record for homeplan service endpoint");
+
+			if (ar.succeeded()) {
+				if (ar.result()!=null) {
+					// Retrieve the service reference
+					ServiceReference reference = discovery.getReference(ar.result());
+					// Retrieve the service object
+					WebClient client = reference.getAs(WebClient.class);
+
+					// You need to path the complete path
+					HttpRequest<JsonObject> request = client.get("/homeplan").as(BodyCodec.jsonObject());
+					request.send(response -> {
+						if (response.succeeded()) {
+							future.complete(response.result().body().getJsonArray("ids").getList());
+							logger.info("Homeplan ids returned");
+						} else {
+							logger.error("Could not get Homeplan ids", response.cause());
+							future.fail("Could not get Homeplan ids");
+						}
+						// Dont' forget to release the service
+						reference.release();
+					});
+				}
+			} else {
+				logger.error("Could not discover homeplan service", ar.cause());
+				future.fail(ar.cause());
+			}
+		});
 
 		return future;
 	}

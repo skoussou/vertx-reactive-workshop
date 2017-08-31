@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+
+
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_ACTION;
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_STATE;
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_TYPE;
@@ -25,6 +27,8 @@ import io.vertx.core.eventbus.MessageConsumer;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.shareddata.SharedData;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 //import io.vertx.rxjava.core.shareddata.Counter;
 //import io.vertx.rxjava.ext.web.RoutingContext;
 
