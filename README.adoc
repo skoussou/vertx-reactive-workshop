@@ -1,6 +1,6 @@
 = SCENARIO
 
-image:images/design.png["VertX Application",height=128] 
+image:images/design.png["VertX Application",height=356] 
 
 
 = LAB 1
