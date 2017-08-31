@@ -27,16 +27,16 @@ FOLLOWED by 15 MINUTES explain the solution
 mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
-.clone/unzip "ReactiveVertX Branch - LAB 1"
-.Create Content for verticles in _device-management_ service
+. clone/unzip "ReactiveVertX Branch - LAB 1"
+. Create Content for verticles in _device-management_ service
   .. consume: Messages from #device-reg on the bus and complete register Device action
   .. ADD the devices into a shared-map (as in previous lab point ....) --WE WILL PROVIDE METHOD FOR THIS
   .. Log operation on console??? WE WILL PROVIDE METHOD FOR THIS THEY JUST NEED TO PUT THE LOGGING
 
-.Create Content for verticles in _*homeplan*_
+. Create Content for verticles in _*homeplan*_
   .. send: Messages to #device-reg on the bus (REMOVE DUMMY IMPLEMENTATION and implement content of sendDevicesRegistration method
 
-.TESTS
+. TESTS
    .. Register HomePlan and seeing on console the devices being registered (give REST Calls)
 
 
