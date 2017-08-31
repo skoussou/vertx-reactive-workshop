@@ -151,7 +151,7 @@ public class MainVerticle extends AbstractVerticle {
 		Future<List<String>> future = Future.future();
 		logger.info("Getting all homeplans ids");
 		//HttpRequest<JsonObject> request = client.get(8080, "localhost", "/homeplan").as(BodyCodec.jsonObject()); 
-		HttpRequest<JsonObject> request = client.get("homeplan-workshop.192.168.1.4.xip.io", "/homeplan").as(BodyCodec.jsonObject());
+		HttpRequest<JsonObject> request = client.get("homeplan.workshop.svc", "/homeplan").as(BodyCodec.jsonObject());
 		request.send(ar -> {
 			if (ar.succeeded()) {
 				future.complete(ar.result().body().getJsonArray("ids").getList());
