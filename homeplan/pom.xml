@@ -49,6 +49,12 @@
       <groupId>io.vertx</groupId>
       <artifactId>vertx-service-discovery-bridge-kubernetes</artifactId>
     </dependency>
+    
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-service-discovery</artifactId>
+    </dependency>
+    
     <!-- required by  vertx-service-discovery-bridge-kubernetes -->
 	 <dependency>
 	      <groupId>org.slf4j</groupId>

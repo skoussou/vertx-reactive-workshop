@@ -17,6 +17,9 @@ import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.client.HttpRequest;
 import io.vertx.ext.web.client.WebClient;
 import io.vertx.ext.web.codec.BodyCodec;
+import io.vertx.servicediscovery.ServiceDiscovery;
+import io.vertx.servicediscovery.ServiceReference;
+import io.vertx.servicediscovery.kubernetes.KubernetesServiceImporter;
 
 public class MainVerticle extends AbstractVerticle {
 
@@ -32,18 +35,18 @@ public class MainVerticle extends AbstractVerticle {
 	private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
 	// Web client
-
-	private WebClient client;
+	// not needed when using service discovery
+	// private WebClient client;
 
 	@Override
 	public void start() {
-		initWebClient();
+		//initWebClient();
 		startAmbianceDataTimer();
 	}
 
-	private void initWebClient() {
-		client = WebClient.create(vertx);
-	}
+//	private void initWebClient() {
+//		client = WebClient.create(vertx);
+//	}
 
 	private void startAmbianceDataTimer() {
 		vertx.setPeriodic(10000, id -> {
@@ -150,33 +153,55 @@ public class MainVerticle extends AbstractVerticle {
 	private Future<List<String>> getHomePlanIds() {
 		Future<List<String>> future = Future.future();
 		logger.info("Getting all homeplans ids");
-		//HttpRequest<JsonObject> request = client.get(8080, "localhost", "/homeplan").as(BodyCodec.jsonObject()); 
-		HttpRequest<JsonObject> request = client.get("homeplan.workshop.svc", "/homeplan").as(BodyCodec.jsonObject());
-		request.send(ar -> {
-			if (ar.succeeded()) {
-				future.complete(ar.result().body().getJsonArray("ids").getList());
+		WebClient client = WebClient.create(vertx);
+		HttpRequest<JsonObject> request = client.get(8080, "localhost", "/homeplan").as(BodyCodec.jsonObject());
+		request.send(response -> {
+			if (response.succeeded()) {
+				future.complete(response.result().body().getJsonArray("ids").getList());
 				logger.info("Homeplan ids returned");
 			} else {
-				logger.error("Could not get Homeplan ids", ar.cause());
+				logger.error("Could not get Homeplan ids", response.cause());
 				future.fail("Could not get Homeplan ids");
 			}
+			// Dont' forget to release the service
 		});
+		
+		// UNCOMMENT FOR OCP
+
+//		ServiceDiscovery discovery = ServiceDiscovery.create(vertx);
+//	    discovery.registerServiceImporter(new KubernetesServiceImporter(), new JsonObject().put("namespace", "workshop"));
+//
+//		discovery.getRecord(r -> r.getName().equals("homeplan"), ar -> {
+//			logger.info("Getting record for homeplan service endpoint");
+//
+//			if (ar.succeeded()) {
+//				if (ar.result()!=null) {
+//					// Retrieve the service reference
+//					ServiceReference reference = discovery.getReference(ar.result());
+//					// Retrieve the service object
+//					WebClient client = reference.getAs(WebClient.class);
+//
+//					// You need to path the complete path
+//					HttpRequest<JsonObject> request = client.get("/homeplan").as(BodyCodec.jsonObject());
+//					request.send(response -> {
+//						if (response.succeeded()) {
+//							future.complete(response.result().body().getJsonArray("ids").getList());
+//							logger.info("Homeplan ids returned");
+//						} else {
+//							logger.error("Could not get Homeplan ids", response.cause());
+//							future.fail("Could not get Homeplan ids");
+//						}
+//						// Dont' forget to release the service
+//						reference.release();
+//					});
+//				}
+//			} else {
+//				logger.error("Could not discover homeplan service", ar.cause());
+//				future.fail(ar.cause());
+//			}
+//		});
+
 		return future;
 	}
-
-	// private Future<HomePlan> getHomePlan(String homeplanId) {
-	// Future<HomePlan> future = Future.future();
-	// HttpRequest<JsonObject> request = client.get(8080, "localhost",
-	// "/homeplan/" + homeplanId).as(BodyCodec.jsonObject());
-	// request.send(ar -> {
-	// if (ar.succeeded()) {
-	// future.complete(ar.result().bodyAsJson(HomePlan.class));
-	// } else {
-	// ar.cause().printStackTrace();
-	// future.fail("Could not get Homeplan " + homeplanId);
-	// }
-	// });
-	// return future;
-	// }
 
 }
