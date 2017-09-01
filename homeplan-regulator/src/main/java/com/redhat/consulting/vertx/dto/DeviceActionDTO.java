@@ -8,23 +8,6 @@ public class DeviceActionDTO {
 	
 	private String id;
 
-//	private DEVICE_TYPE type;
-//	
-//	private DEVICE_ACTION action = DEVICE_ACTION.NONE;
-//	
-//	private DEVICE_STATE state = DEVICE_STATE.OFF;
-//
-//	private int fromNumber;
-//
-//	private int toNumber;
-//	
-//	//private Calendar timeStart;
-//	private long timeStart;
-//	
-//	/** Maintains a sequence of actions tobe activated on a Device) */
-//	private long actionSequence;
-
-
 	public DeviceActionDTO() {
 		super();
 	}

@@ -2,8 +2,6 @@ package com.redhat.consulting.vertx.dto;
 
 import java.io.Serializable;
 
-import com.redhat.consulting.vertx.workshop.types.DEVICE_TYPE;
-
 /**
  * SensorLocation DTO
  * 
