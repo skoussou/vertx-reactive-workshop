@@ -1,12 +1,10 @@
 package com.redhat.consulting.vertx.data;
 
 import java.io.Serializable;
-import java.util.Calendar;
 
-import com.redhat.consulting.vertx.MainVerticle;
-import com.redhat.consulting.vertx.MainVerticle.DEVICE_ACTION;
-import com.redhat.consulting.vertx.MainVerticle.DEVICE_STATE;
-import com.redhat.consulting.vertx.MainVerticle.DEVICE_TYPE;
+import com.redhat.consulting.vertx.Constants.DeviceAction;
+import com.redhat.consulting.vertx.Constants.DeviceState;
+import com.redhat.consulting.vertx.Constants.DeviceType;
 
 public class Device implements Serializable {
 
@@ -19,11 +17,11 @@ public class Device implements Serializable {
 	
 	private String id;
 
-	private MainVerticle.DEVICE_TYPE type;
+	private DeviceType type;
 	
-	private MainVerticle.DEVICE_ACTION action = DEVICE_ACTION.NONE;
+	private DeviceAction action = DeviceAction.NONE;
 	
-	private MainVerticle.DEVICE_STATE state = DEVICE_STATE.OFF;
+	private DeviceState state = DeviceState.OFF;
 
 	private int temperature;
 
@@ -51,7 +49,7 @@ public class Device implements Serializable {
 //		this.actionSequence = actionSequence;
 //	}
 
-	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, int temperature, long lastUpdate) {
+	public Device(String housePlanId, String id, DeviceType type, DeviceAction action, DeviceState state, int temperature, long lastUpdate) {
 		super();
 		this.housePlanId = housePlanId;
 		this.id = id;
@@ -74,15 +72,15 @@ public class Device implements Serializable {
 		return id;
 	}
 
-	public MainVerticle.DEVICE_TYPE getType() {
+	public DeviceType getType() {
 		return type;
 	}
 
-	public MainVerticle.DEVICE_ACTION getAction() {
+	public DeviceAction getAction() {
 		return action;
 	}
 
-	public MainVerticle.DEVICE_STATE getState() {
+	public DeviceState getState() {
 		return state;
 	}
 
@@ -102,15 +100,15 @@ public class Device implements Serializable {
 		this.id = id;
 	}
 
-	public void setType(MainVerticle.DEVICE_TYPE type) {
+	public void setType(DeviceType type) {
 		this.type = type;
 	}
 
-	public void setAction(MainVerticle.DEVICE_ACTION action) {
+	public void setAction(DeviceAction action) {
 		this.action = action;
 	}
 
-	public void setState(MainVerticle.DEVICE_STATE state) {
+	public void setState(DeviceState state) {
 		this.state = state;
 	}
 

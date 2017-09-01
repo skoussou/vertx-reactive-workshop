@@ -1,4 +1,4 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
  * @author dsancho
  *
  */
-public class Devices implements Serializable {
+public class DevicesDTO implements Serializable {
 
 	/**
 	 * 
@@ -18,15 +18,15 @@ public class Devices implements Serializable {
 
 	private String id; 
 	
-	private List<Device> devices;
+	private List<DeviceDTO> devices;
 	
-	public Devices(String id, List<Device> devices) {
+	public DevicesDTO(String id, List<DeviceDTO> devices) {
 		super();
 		this.id = id;
 		this.devices = devices;
 	}
 	
-	public Devices() {
+	public DevicesDTO() {
 		super();
 	}
 
@@ -38,11 +38,11 @@ public class Devices implements Serializable {
 		this.id = id;
 	}
 
-	public List<Device> getDevices() {
+	public List<DeviceDTO> getDevices() {
 		return devices;
 	}
 
-	public void setDevices(List<Device> devices) {
+	public void setDevices(List<DeviceDTO> devices) {
 		this.devices = devices;
 	}
 }

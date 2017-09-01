@@ -3,9 +3,11 @@ package com.redhat.consulting.vertx;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.redhat.consulting.vertx.data.Devices;
 import com.redhat.consulting.vertx.data.HomePlan;
-import com.redhat.consulting.vertx.data.HomePlanIds;
+import com.redhat.consulting.vertx.dto.DevicesDTO;
+import com.redhat.consulting.vertx.dto.FullHomePlanDTO;
+import com.redhat.consulting.vertx.dto.HomePlanIdsDTO;
+import com.redhat.consulting.vertx.utils.Mapper;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -27,59 +29,41 @@ import io.vertx.ext.web.handler.BodyHandler;
  */
 public class MainVerticle extends AbstractVerticle {
 
-	// Rest
-	private static final String ROOT_PATH = "/homeplan";
-
-	private static final String ID_PARAM = "id";
-
-	// Share data
-	private static final String HOMEPLANS_MAP = "homeplans";
-
-	private static final String HOMEPLAN_IDS_MAP = "homeplan-ids";
-
-	private static final String SET_ID = "index-set-id";
-
-	// Addresses
-	private static final String DEVICE_REGISTRATION_EVENTS_ADDRESS = "device-reg";
-	
-	private static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
-	
 	// logger
-	
-	private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
+	private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 
 	@Override
 	public void start() {
-		startHttpServer();		
-		startHomeplanEventBusProvider();
+		startHttpServer();
+		startHomeplanProviderEventBus();
 	}
-	
+
 	private void startHttpServer() {
-		
+
 		// * 1 (simple http server)
 
 		// vertx.createHttpServer().requestHandler(req ->
 		// req.response().end("hello")).listen(8080);
 
 		// * 2 (adding router)
-		
+
 		Router router = Router.router(vertx);
 
-		router.route(ROOT_PATH + "*").handler(BodyHandler.create());
+		router.route(Constants.ROOT_PATH + "*").handler(BodyHandler.create());
 
-		router.get(ROOT_PATH).handler(this::getAll);
-		router.get(ROOT_PATH + "/:" + ID_PARAM).handler(this::getOne);
-		router.post(ROOT_PATH + "/:" + ID_PARAM).handler(this::addOne);
-		router.put(ROOT_PATH + "/:" + ID_PARAM).handler(this::addOne);
+		router.get(Constants.ROOT_PATH).handler(this::getAll);
+		router.get(Constants.ROOT_PATH + "/:" + Constants.ID_PARAM).handler(this::getOne);
+		router.post(Constants.ROOT_PATH + "/:" + Constants.ID_PARAM).handler(this::addOne);
+		router.put(Constants.ROOT_PATH + "/:" + Constants.ID_PARAM).handler(this::addOne);
 
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
-		
+
 		logger.info("Http router has started");
 	}
-	
-	private void startHomeplanEventBusProvider() {
-		vertx.eventBus().<String>consumer(HOMEPLANS_EVENTS_ADDRESS, message -> {
+
+	private void startHomeplanProviderEventBus() {
+		vertx.eventBus().<String>consumer(Constants.HOMEPLANS_EVENTS_ADDRESS, message -> {
 			replyWithHomeplan(message);
 		});
 		logger.info("Homeplans event bus ready");
@@ -87,14 +71,14 @@ public class MainVerticle extends AbstractVerticle {
 	}
 
 	// Methods used by event bus consumer
-	
+
 	private void replyWithHomeplan(Message<String> message) {
 		SharedData sd = vertx.sharedData();
 		Future<HomePlan> futureHomePlan = getHomePlan(sd, message.body());
 		futureHomePlan.compose(s -> {
 			HomePlan homePlan = futureHomePlan.result();
 			if (homePlan != null) {
-				message.reply(Json.encode(homePlan));
+				message.reply(Json.encode(Mapper.toHomePlanDTO(homePlan)));
 				logger.info("Replied to message successfully");
 			} else {
 				logger.info("Homeplan not found, replying failure");
@@ -111,23 +95,23 @@ public class MainVerticle extends AbstractVerticle {
 	private void getAll(RoutingContext routingContext) {
 		SharedData sd = vertx.sharedData();
 		logger.info("Getting all homeplan ids available");
-		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
+		sd.<String, Set<String>>getClusterWideMap(Constants.HOMEPLAN_IDS_MAP, res -> {
 			if (res.succeeded()) {
-				res.result().get(SET_ID, rh -> {
-					if (rh.succeeded() && rh.result()!=null) {
-						logger.info("Returning {0} ", Json.encodePrettily(new HomePlanIds(rh.result())));
+				res.result().get(Constants.SET_ID, rh -> {
+					if (rh.succeeded() && rh.result() != null) {
+						logger.info("Returning {0} ", Json.encodePrettily(new HomePlanIdsDTO(rh.result())));
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(new HomePlanIds(rh.result())));
+								.end(Json.encodePrettily(new HomePlanIdsDTO(rh.result())));
 					} else {
 						logger.info("Returning empty response");
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(new HomePlanIds()));
+								.end(Json.encodePrettily(new HomePlanIdsDTO()));
 					}
 				});
 			} else {
 				logger.error("Error getting homeplan ids", res.cause());
 				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-						.end(Json.encodePrettily(new HomePlanIds()));
+						.end(Json.encodePrettily(new HomePlanIdsDTO()));
 			}
 		});
 	}
@@ -137,7 +121,7 @@ public class MainVerticle extends AbstractVerticle {
 
 		// using futures so we can reuse getHomePlan
 
-		Future<HomePlan> futureHomePlan = getHomePlan(sd, routingContext.pathParam(ID_PARAM));
+		Future<HomePlan> futureHomePlan = getHomePlan(sd, routingContext.pathParam(Constants.ID_PARAM));
 		futureHomePlan.compose(s -> {
 			HomePlan homePlan = futureHomePlan.result();
 			if (homePlan != null) {
@@ -180,26 +164,27 @@ public class MainVerticle extends AbstractVerticle {
 	}
 
 	private void addOne(RoutingContext routingContext) {
-		final HomePlan homePlan = Json.decodeValue(routingContext.getBodyAsString(), HomePlan.class);
+		final FullHomePlanDTO fullHomePlanDto = Json.decodeValue(routingContext.getBodyAsString(), FullHomePlanDTO.class);
 
 		SharedData sd = vertx.sharedData();
 
 		// add homeplan
-		Future<String> futureHomePlan = addHomePlan(sd, routingContext.pathParam(ID_PARAM), homePlan);
+		Future<String> futureHomePlan = addHomePlan(sd, routingContext.pathParam(Constants.ID_PARAM),
+				Mapper.toHomePlan(fullHomePlanDto));
 
 		futureHomePlan.compose(s1 -> {
 			// add id to indexes set
-			Future<String> futureId = addIdToIndex(sd, routingContext.pathParam(ID_PARAM));
+			Future<String> futureId = addIdToIndex(sd, routingContext.pathParam(Constants.ID_PARAM));
 
 			futureId.compose(s2 -> {
 				// sending device registration
-				Future<String> futureDevReg = sendDevicesRegistration(homePlan);
+				Future<String> futureDevReg = sendDevicesRegistration(fullHomePlanDto);
 
 				futureDevReg.compose(s3 -> {
 
 					routingContext.response().setStatusCode(201)
 							.putHeader("content-type", "application/json; charset=utf-8")
-							.end(Json.encodePrettily(homePlan));
+							.end(Json.encodePrettily(fullHomePlanDto));
 
 				}, Future.future().setHandler(handler -> {
 					// Something went wrong!
@@ -221,7 +206,7 @@ public class MainVerticle extends AbstractVerticle {
 	private Future<HomePlan> getHomePlan(SharedData sd, String id) {
 		Future<HomePlan> future = Future.future();
 		logger.info("Getting homeplan details for id {0}", id);
-		sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
+		sd.<String, HomePlan>getClusterWideMap(Constants.HOMEPLANS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().get(id, ar -> {
 					if (ar.succeeded()) {
@@ -242,11 +227,12 @@ public class MainVerticle extends AbstractVerticle {
 		return future;
 	}
 
-	// FIXME Concurrency... what if were adding several homeplans at the same time? Lock should be done
+	// FIXME Concurrency... what if were adding several homeplans at the same
+	// time? Lock should be done
 	private Future<String> addHomePlan(SharedData sd, String id, HomePlan homePlan) {
 		Future<String> future = Future.future();
 		logger.info("Adding homeplan {0}", Json.encodePrettily(homePlan));
-		sd.<String, HomePlan>getClusterWideMap(HOMEPLANS_MAP, res -> {
+		sd.<String, HomePlan>getClusterWideMap(Constants.HOMEPLANS_MAP, res -> {
 			if (res.succeeded()) {
 				res.result().put(id, homePlan, ar -> {
 					if (ar.succeeded()) {
@@ -267,13 +253,14 @@ public class MainVerticle extends AbstractVerticle {
 		return future;
 	}
 
-	// FIXME Concurrency... what if were adding several ids at the same time? Lock should be done
+	// FIXME Concurrency... what if were adding several ids at the same time?
+	// Lock should be done
 	private Future<String> addIdToIndex(SharedData sd, String id) {
 		Future<String> future = Future.future();
 		logger.info("Adding homeplan id {0} to index table", id);
-		sd.<String, Set<String>>getClusterWideMap(HOMEPLAN_IDS_MAP, res -> {
+		sd.<String, Set<String>>getClusterWideMap(Constants.HOMEPLAN_IDS_MAP, res -> {
 			if (res.succeeded()) {
-				res.result().get(SET_ID, rh -> {
+				res.result().get(Constants.SET_ID, rh -> {
 					if (rh.succeeded()) {
 						Set<String> indexes = rh.result();
 						if (indexes == null) {
@@ -281,7 +268,7 @@ public class MainVerticle extends AbstractVerticle {
 							indexes = new HashSet<>();
 						}
 						indexes.add(id);
-						res.result().put(SET_ID, indexes, rhids -> {
+						res.result().put(Constants.SET_ID, indexes, rhids -> {
 							if (rhids.succeeded()) {
 								future.complete("Id added successfully");
 								logger.info("Id added successfully");
@@ -307,24 +294,27 @@ public class MainVerticle extends AbstractVerticle {
 		return future;
 	}
 
-	private Future<String> sendDevicesRegistration(HomePlan homePlan) {
+	private Future<String> sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto) {
 		Future<String> future = Future.future();
 		// create devices message, that is, homeplan without sensors
-		Devices message = new Devices(homePlan.getId(), homePlan.getDevices());
-		logger.info("Sending event to address {0} to register devices", DEVICE_REGISTRATION_EVENTS_ADDRESS);
-		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message));
+		DevicesDTO message = new DevicesDTO(fullHomePlanDto.getId(), fullHomePlanDto.getDevices());
+		logger.info("Sending event to address {0} to register devices", Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS);
+		logger.info(Json.encodePrettily(message));
+		vertx.eventBus().send(Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message));
 		future.complete("Device registration sent");
 		// if using send/reply in device-management
-//		vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS, Json.encodePrettily(message), reply -> {
-//			if (reply.succeeded()) {
-//				future.complete("Received reply");
-//				logger.info("Devices registered");
-//			} else {
-//				future.fail("No reply from Device management service");
-//				//future.complete("No reply.. but mocking OK");
-//				logger.error("No reply from Device management service", reply.cause());
-//			}
-//		});
+		// vertx.eventBus().send(DEVICE_REGISTRATION_EVENTS_ADDRESS,
+		// Json.encodePrettily(message), reply -> {
+		// if (reply.succeeded()) {
+		// future.complete("Received reply");
+		// logger.info("Devices registered");
+		// } else {
+		// future.fail("No reply from Device management service");
+		// //future.complete("No reply.. but mocking OK");
+		// logger.error("No reply from Device management service",
+		// reply.cause());
+		// }
+		// });
 		return future;
 	}
 }

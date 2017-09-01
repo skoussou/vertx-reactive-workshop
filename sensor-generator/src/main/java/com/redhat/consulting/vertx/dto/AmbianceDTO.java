@@ -1,4 +1,4 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 /**
  * Ambiance data event
@@ -6,17 +6,17 @@ package com.redhat.consulting.vertx.data;
  * @author dsancho
  *
  */
-public class AmbianceEvent {
+public class AmbianceDTO {
 
 	private String housePlanId;
 
-	private SensorLocation sensorLocation;
+	private SensorLocationDTO sensorLocation;
 
-	public AmbianceEvent() {
+	public AmbianceDTO() {
 		super();
 	}
 
-	public AmbianceEvent(String housePlanId, SensorLocation sensorLocation) {
+	public AmbianceDTO(String housePlanId, SensorLocationDTO sensorLocation) {
 		super();
 		this.housePlanId = housePlanId;
 		this.sensorLocation = sensorLocation;
@@ -30,11 +30,11 @@ public class AmbianceEvent {
 		this.housePlanId = housePlanId;
 	}
 
-	public SensorLocation getSensorLocation() {
+	public SensorLocationDTO getSensorLocation() {
 		return sensorLocation;
 	}
 
-	public void setSensorLocation(SensorLocation sensorLocation) {
+	public void setSensorLocation(SensorLocationDTO sensorLocation) {
 		this.sensorLocation = sensorLocation;
 	}
 

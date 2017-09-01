@@ -1,4 +1,4 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 /**
  * Sensor data object
@@ -6,17 +6,17 @@ package com.redhat.consulting.vertx.data;
  * @author dsancho
  *
  */
-public class Sensor {
+public class SensorDTO {
 	
 	private String housePlanId;
 	
 	private String sensor;
 
-	public Sensor() {
+	public SensorDTO() {
 		super();
 	}
 	
-	public Sensor(String housePlanId, String sensor) {
+	public SensorDTO(String housePlanId, String sensor) {
 		super();
 		this.housePlanId = housePlanId;
 		this.sensor = sensor;

@@ -1,16 +1,5 @@
 package com.redhat.consulting.vertx;
 
-import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
-import io.vertx.core.json.Json;
-import io.vertx.core.json.JsonObject;
-import io.vertx.core.spi.cluster.ClusterManager;
-import io.vertx.ext.unit.Async;
-import io.vertx.ext.unit.TestContext;
-import io.vertx.ext.unit.junit.VertxUnitRunner;
-import io.vertx.spi.cluster.hazelcast.HazelcastClusterManager;
-
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -21,11 +10,14 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.redhat.consulting.vertx.MainVerticle.DEVICE_ACTION;
-import com.redhat.consulting.vertx.MainVerticle.DEVICE_STATE;
-import com.redhat.consulting.vertx.MainVerticle.DEVICE_TYPE;
+import com.redhat.consulting.vertx.Constants.DeviceType;
 import com.redhat.consulting.vertx.data.Device;
 import com.redhat.consulting.vertx.dto.DeviceDTO;
+
+import io.vertx.core.Vertx;
+import io.vertx.core.json.Json;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 
 @RunWith(VertxUnitRunner.class)
 public class MainVerticleTest {
@@ -75,8 +67,8 @@ public class MainVerticleTest {
 
   /* ----------- CREATEPAYLOAD DEVICE FOR REGISTRATION-------------- */
   private String createRegistrationPayload() {
-		Device regDev1 = new Device(null, "kitchen-1", DEVICE_TYPE.AIRCON, null, null,0, 0, 0L, 0L);
-		Device regDev2 = new Device(null, "bedroom-1", DEVICE_TYPE.AIRCON, null, null, 0, 0, 0L, 0L);
+		Device regDev1 = new Device(null, "kitchen-1", DeviceType.AIRCON, null, null,0, 0L);
+		Device regDev2 = new Device(null, "bedroom-1", DeviceType.AIRCON, null, null, 0, 0L);
 		
 		HashMap<String, List<Device>> payload = new HashMap<String, List<Device>>();
 		DeviceDTO dtoMsg = new DeviceDTO("kousourisHousehold", Arrays.asList(regDev1, regDev2));

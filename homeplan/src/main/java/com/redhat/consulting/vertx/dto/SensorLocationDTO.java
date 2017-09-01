@@ -1,4 +1,4 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author dsancho
  *
  */
-public class SensorLocation implements Serializable {
+public class SensorLocationDTO implements Serializable {
 
 	/**
 	 * 
@@ -21,14 +21,14 @@ public class SensorLocation implements Serializable {
 	
 	private int temperature;
 
-	public SensorLocation(String id, String type, int temperature) {
+	public SensorLocationDTO(String id, String type, int temperature) {
 		super();
 		this.id = id;
 		this.type = type;
 		this.temperature = temperature;
 	}
 
-	public SensorLocation() {
+	public SensorLocationDTO() {
 		super();
 	}
 

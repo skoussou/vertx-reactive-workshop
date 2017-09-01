@@ -1,4 +1,4 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 import java.io.Serializable;
 
@@ -8,7 +8,7 @@ import java.io.Serializable;
  * @author dsancho
  *
  */
-public class Device implements Serializable {
+public class DeviceDTO implements Serializable {
 
 	/**
 	 * 
@@ -19,13 +19,13 @@ public class Device implements Serializable {
 
 	private String type;
 
-	public Device(String id, String type) {
+	public DeviceDTO(String id, String type) {
 		super();
 		this.id = id;
 		this.type = type;
 	}
 
-	public Device() {
+	public DeviceDTO() {
 		super();
 	}
 

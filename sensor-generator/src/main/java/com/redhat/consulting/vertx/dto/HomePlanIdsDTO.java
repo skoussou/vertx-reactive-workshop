@@ -1,18 +1,18 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class HomePlanIds {
+public class HomePlanIdsDTO {
 	
 	private Set<String> ids;
 
-	public HomePlanIds() {
+	public HomePlanIdsDTO() {
 		super();
 		ids = new HashSet<>();
 	}
 	
-	public HomePlanIds(Set<String> ids) {
+	public HomePlanIdsDTO(Set<String> ids) {
 		super();
 		this.ids = ids;
 	}
