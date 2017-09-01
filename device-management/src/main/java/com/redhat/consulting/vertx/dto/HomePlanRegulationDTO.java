@@ -11,7 +11,7 @@ public class HomePlanRegulationDTO implements Serializable {
 
 	private String housePlanId;
 	
-	private String sensor;
+	private String id;
 
 	public HomePlanRegulationDTO() {
 	}
@@ -19,15 +19,15 @@ public class HomePlanRegulationDTO implements Serializable {
 	public HomePlanRegulationDTO(String housePlanId, String sensor) {
 		super();
 		this.housePlanId = housePlanId;
-		this.sensor = sensor;
+		this.id = sensor;
 	}
 
 	public String getHousePlanId() {
 		return housePlanId;
 	}
 
-	public String getSensor() {
-		return sensor;
+	public String getId() {
+		return id;
 	}
 	
 	
