@@ -18,6 +18,12 @@ import io.vertx.core.json.Json;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 
+/**
+ * Vert.X verticle to deliver HomePlan Regulator MicroService
+ * 
+ * @author stkousso
+ *
+ */
 public class MainVerticle extends AbstractVerticle {
 	
 	private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
