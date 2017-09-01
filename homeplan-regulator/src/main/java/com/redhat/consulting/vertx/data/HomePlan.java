@@ -6,22 +6,23 @@ import java.util.List;
 /**
  * HomePlan data object
  *  
- * @author dsancho
+ * @author stkousso
  *
  */
-public class HomePlan extends Devices implements Serializable {
+public class HomePlan implements Serializable {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private String id;
 	
 	private List<SensorLocation> sensorLocations;
 	
 	
-	public HomePlan(String id, List<SensorLocation> sensorLocations, List<Device> devices) {
-		super(id, devices);
+	public HomePlan(String id, List<SensorLocation> sensorLocations) {
+		this.id = id;
 		this.sensorLocations = sensorLocations;
 	}
 	
@@ -35,6 +36,14 @@ public class HomePlan extends Devices implements Serializable {
 
 	public void setSensorLocations(List<SensorLocation> sensorLocations) {
 		this.sensorLocations = sensorLocations;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

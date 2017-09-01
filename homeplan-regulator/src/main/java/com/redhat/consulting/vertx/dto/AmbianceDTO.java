@@ -2,8 +2,11 @@ package com.redhat.consulting.vertx.dto;
 
 import java.io.Serializable;
 
-import com.redhat.consulting.vertx.data.SensorLocation;
-
+/**
+ * Handles messages on Vert.X event bus address #ambiance-data
+ * @author stkousso
+ *
+ */
 public class AmbianceDTO implements Serializable{
 
 	/**

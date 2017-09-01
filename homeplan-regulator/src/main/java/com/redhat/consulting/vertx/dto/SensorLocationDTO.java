@@ -5,9 +5,9 @@ import java.io.Serializable;
 import com.redhat.consulting.vertx.workshop.types.DEVICE_TYPE;
 
 /**
- * SensorLocation data object
+ * SensorLocation DTO
  * 
- * @author dsancho
+ * @author stkousso
  *
  */
 public class SensorLocationDTO implements Serializable {

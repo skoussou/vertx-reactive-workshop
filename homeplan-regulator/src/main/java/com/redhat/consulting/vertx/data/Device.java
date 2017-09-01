@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Device data object
  * 
- * @author dsancho
+ * @author stkousso
  *
  */
 public class Device implements Serializable {

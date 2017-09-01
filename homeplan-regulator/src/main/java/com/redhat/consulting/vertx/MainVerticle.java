@@ -2,10 +2,13 @@ package com.redhat.consulting.vertx;
 
 import com.redhat.consulting.vertx.Constants.AppErrorCode;
 import com.redhat.consulting.vertx.Constants.DeviceAction;
+import com.redhat.consulting.vertx.data.Ambiance;
 import com.redhat.consulting.vertx.data.HomePlan;
 import com.redhat.consulting.vertx.data.SensorLocation;
 import com.redhat.consulting.vertx.dto.AmbianceDTO;
 import com.redhat.consulting.vertx.dto.DeviceActionDTO;
+import com.redhat.consulting.vertx.dto.HomePlanDTO;
+import com.redhat.consulting.vertx.utils.Mapper;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -23,110 +26,25 @@ public class MainVerticle extends AbstractVerticle {
 	
 	  @Override
 	  public void start() {
+			logger.info("\n----------------------------------------------------------------------------\n HOMEPLAN REGULATOR - MainVerticle \n----------------------------------------------------------------------------");
 		  
-		  startHomeplanRegulatorEventBusProvider();
-
-		  // OLD IMPLEMENTATION WORKING
-//			System.out.println("\n\n STARTING HOMEPLAN REGULATOR - MainVerticle \n");
-//
-//		  
-//			vertx.eventBus().<String>consumer(AMBIANBCE_DATA_ADDRESS, message -> {
-//
-//				System.out.println("\n\n CONSUMING message from #"+AMBIANBCE_DATA_ADDRESS);
-//				System.out.println("HANDLED BY Verticle.EventLoop" + this.toString());
-//
-//				// Check whether we have received a payload in the incoming message
-//				if (message.body().isEmpty()) {
-//					// SEND/REPLY example
-//					// message.reply(json.put("message", "hello"));
-//				} else {
-//									
-//					// We will receive it as JSON string, transform it to its class equivalent
-//					AmbianceDTO ambianceData = Json.decodeValue(message.body(), AmbianceDTO.class);
-//
-//					
-//					System.out.println("\n CONSUMED AMBIANCE-DATA \n"+Json.encodePrettily(ambianceData)+"\n\n");
-//								
-//					Future<HomePlan> futureHomeplan = getHomePlan(ambianceData.getHousePlanId());
-//					futureHomeplan.compose(s2 -> {
-//						System.out.println("Get sensor location preferences status for home plan: " + ambianceData.getHousePlanId());
-//						
-//						if (s2.getSensorLocations()!= null && !s2.getSensorLocations().isEmpty()) {
-//							for (SensorLocation sl : s2.getSensorLocations()) {
-//								
-//								System.out.println("Finding match between ambiance data ["+ambianceData.getHousePlanId()+"-"+ambianceData.getSensorLocation().getId()
-//										+"] and sensor location ["+ambianceData.getHousePlanId()+"-"+sl.getId()+"]");
-//								
-//								if (ambianceData.getSensorLocation().getId()!= null && sl.getId() != null && ambianceData.getSensorLocation().getId().equals(sl.getId())){
-//									
-//									String msgPayload = null;
-//									DEVICE_MANAGEMENT_ACTION headerAction = DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE;
-//									
-//									System.out.println("MATCH-FOUND: Homeplan Regulator in action on Device: "+ambianceData.getHousePlanId()+"-"+sl.getId());
-//									
-//									System.out.println("Action Before: "+actionCounter);
-//									if (actionCounter == 3){
-//										actionCounter = 1;
-//									} else {
-//										actionCounter =+ 1;
-//									}
-//									System.out.println("Action NOW: "+actionCounter);
-//									
-//
-//									
-//									switch(actionCounter) {
-//									case 1:
-//										System.out.println("Action NOW: "+DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE);
-//										System.out.println("Action NOW: "+DEVICE_ACTION.INCREASING);
-//										headerAction = DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE;
-//										msgPayload = createDeviceManagementActionPayload(ambianceData.getHousePlanId(), sl.getId(), DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.INCREASING, DEVICE_TYPE.AIRCON, 16, 23, TimeUtils.timeInMillisNow(), 1L);
-//										break;
-//									case 2:
-//										System.out.println("Action NOW: "+DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE);
-//										headerAction = DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE;
-//										msgPayload = createDeviceManagementActionPayload(ambianceData.getHousePlanId(), sl.getId(), DEVICE_MANAGEMENT_ACTION.TURNOFF_DEVICE, DEVICE_ACTION.NONE, DEVICE_TYPE.AIRCON, 0, 0, TimeUtils.timeInMillisNow(), 1L);
-//
-//										break;
-//									case 3:
-//										System.out.println("Action NOW: "+DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE);
-//										System.out.println("Action NOW: "+DEVICE_ACTION.DECREASING);
-//										headerAction = DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE;
-//										msgPayload = createDeviceManagementActionPayload(ambianceData.getHousePlanId(), sl.getId(), DEVICE_MANAGEMENT_ACTION.ACTIVATE_DEVICE, DEVICE_ACTION.DECREASING, DEVICE_TYPE.AIRCON, 25, 21, TimeUtils.timeInMillisNow(), 1L);
-//
-//										break;
-//
-//									}
-//											
-//									sendDeviceAction(headerAction, msgPayload);
-//
-//								}
-//
-//							}
-//						}
-//					}, Future.future().setHandler(handler -> {
-//						// Something went wrong!
-//						handler.cause().printStackTrace();
-//						System.out.println("Error getting Homeplans");
-//					}));
-//				}
-//
-//			});		
-						
-			
+		  startHomeplanRegulatorEventBusProvider();					
 	  }
 	
 	private void startHomeplanRegulatorEventBusProvider() {
 		vertx.eventBus().<String>consumer(Constants.AMBIANBCE_DATA_ADDRESS, message -> {
+			logger.info("\n----------------------------------------------------------------------------\n HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop "+this.toString()+" \n----------------------------------------------------------------------------");	
 			applyHomePlanRegulation(message);
 		});
-		logger.info("\n----------------------------------------------------------------------------\n HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop "+this.toString()+" \n----------------------------------------------------------------------------");
-		
 	}
 
 	private void applyHomePlanRegulation(Message<String> message) {
 		// We will receive it as JSON string, transform it to its class equivalent
-		AmbianceDTO ambianceData = Json.decodeValue(message.body(), AmbianceDTO.class);
+		Ambiance ambianceData = Mapper.toAmbiance(Json.decodeValue(message.body(), AmbianceDTO.class));
 		
+		logger.info("Begin Regulating Location "+ambianceData.getHousePlanId()+"-"+ambianceData.getSensorLocation());
+		logger.debug("AMBIANCE DATA RECEIVED "+Json.encodePrettily(ambianceData));	
+
 		Future<HomePlan> futureHomePlan = getHomePlan(ambianceData.getHousePlanId());
 		futureHomePlan.compose(s1 -> {
 			HomePlan homePlan = futureHomePlan.result();
@@ -151,12 +69,17 @@ public class MainVerticle extends AbstractVerticle {
 	}	
 	
 	private Future<HomePlan> getHomePlan(String homeplanId) {
+		logger.debug("\n\n ASKING HOMEPLAN service for homeplan id --> "+homeplanId+"\n");
+		
 		Future<HomePlan> future = Future.future();
 		vertx.eventBus().send(Constants.HOMEPLANS_EVENTS_ADDRESS, homeplanId, reply -> {
 			if (reply.succeeded()) {
-				final HomePlan homePlan = Json.decodeValue(reply.result().body().toString(), HomePlan.class);
+				logger.info("HOMEPLAN WITH ID ["+homeplanId+"] RETURNED");
+				final HomePlanDTO homePlanDTO = Json.decodeValue(reply.result().body().toString(), HomePlanDTO.class);
+				final HomePlan homePlan = Mapper.toHomePlan(homePlanDTO);
 				future.complete(homePlan);
 			} else {
+				logger.error("HOMEPLAN WITH ID ["+homeplanId+"] NOT FOUND");
 				reply.cause().printStackTrace();
 				future.fail("No reply from Homeplan service");
 			}
@@ -164,21 +87,24 @@ public class MainVerticle extends AbstractVerticle {
 		return future;
 	}
 		
-	private Future<String> sendRegulatoryMsg(HomePlan plan, AmbianceDTO ambianceData) {
+	
+	
+	private Future<String> sendRegulatoryMsg(HomePlan plan, Ambiance ambianceData) {
 		Future<String> futureHPReguMsg = Future.future();
 		
 		if (plan.getSensorLocations()!= null && !plan.getSensorLocations().isEmpty()) {
 			for (SensorLocation sl : plan.getSensorLocations()) {
 
-				logger.debug("Finding match between ambiance data ["+ambianceData.getHousePlanId()+"-"+ambianceData.getSensorLocation().getId()
+				logger.info("Finding match between ambiance data ["+ambianceData.getHousePlanId()+"-"+ambianceData.getSensorLocation().getId()
 						+"] and sensor location ["+ambianceData.getHousePlanId()+"-"+sl.getId()+"]");
 
 				if (ambianceData.getSensorLocation().getId()!= null && sl.getId() != null && ambianceData.getSensorLocation().getId().equals(sl.getId())){
-					logger.debug("MATCH-FOUND: Homeplan Regulator in action on Device: "+ambianceData.getHousePlanId()+"-"+sl.getId());
+					logger.info("MATCH-FOUND: Homeplan Regulator in action on Device: "+ambianceData.getHousePlanId()+"-"+sl.getId());
+					logger.info("AMBIANCE"+Json.encodePrettily(ambianceData.getSensorLocation()));
+					logger.info("PLAN"+Json.encodePrettily(sl));
 
 					DeviceAction headerAction = applyTemperatureHomePlan(sl.getTemperature(), ambianceData.getSensorLocation().getTemperature());
 					String msgPayload = Json.encodePrettily((new DeviceActionDTO(ambianceData.getHousePlanId(), sl.getId())));
-
 
 					sendDeviceAction(headerAction, msgPayload);
 
@@ -203,6 +129,10 @@ public class MainVerticle extends AbstractVerticle {
 	  }
 	
 	private DeviceAction applyTemperatureHomePlan(int planSensorLocationTemperature, int sensorTemperature) {
+		
+		logger.info("Applying Temperature HomePlan for PLAN TEMP ["+planSensorLocationTemperature+" Location TEMP ["+sensorTemperature+"] ");
+		
+		
 		if (planSensorLocationTemperature > sensorTemperature)
 			return DeviceAction.INCREASING;
 		else if (planSensorLocationTemperature < sensorTemperature)
@@ -213,13 +143,5 @@ public class MainVerticle extends AbstractVerticle {
 	private String appErrorPrefix(AppErrorCode error){
 		return error.getErrorCode()+": "+error;
 	}
-	
- 
-//  private String createDeviceManagementActionPayload(String homePlanId, String sensorLocationNAME) {
-//		 return  Json.encodePrettily((new DeviceActionDTO(homePlanId, sensorLocationNAME)));
-//  }
-
-
-
 
 }
