@@ -23,4 +23,6 @@ public class Constants {
 	public static final String DEVICE_REGISTRATION_EVENTS_ADDRESS = "device-reg";
 	
 	public static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
+	
+	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
 }

@@ -126,7 +126,7 @@ public class MainVerticle extends AbstractVerticle {
 			HomePlan homePlan = futureHomePlan.result();
 			if (homePlan != null) {
 				routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-						.end(Json.encodePrettily(homePlan));
+						.end(Json.encodePrettily(Mapper.toFullHomePlanDTO(homePlan)));
 			} else {
 				routingContext.fail(404);
 			}
