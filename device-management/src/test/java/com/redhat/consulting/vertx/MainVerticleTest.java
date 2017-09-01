@@ -12,7 +12,7 @@ import org.junit.runner.RunWith;
 
 import com.redhat.consulting.vertx.Constants.DeviceType;
 import com.redhat.consulting.vertx.data.Device;
-import com.redhat.consulting.vertx.dto.DeviceDTO;
+import com.redhat.consulting.vertx.dto.DevicesRegistratoinDTO;
 
 import io.vertx.core.Vertx;
 import io.vertx.core.json.Json;
@@ -71,7 +71,7 @@ public class MainVerticleTest {
 		Device regDev2 = new Device(null, "bedroom-1", DeviceType.AIRCON, null, null, 0, 0L);
 		
 		HashMap<String, List<Device>> payload = new HashMap<String, List<Device>>();
-		DeviceDTO dtoMsg = new DeviceDTO("kousourisHousehold", Arrays.asList(regDev1, regDev2));
+		DevicesRegistratoinDTO dtoMsg = new DevicesRegistratoinDTO("kousourisHousehold", Arrays.asList(regDev1, regDev2));
 		//payload.put("kousourisHousehold", Arrays.asList(regDev1, regDev2));
 		
 		
