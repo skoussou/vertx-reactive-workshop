@@ -25,39 +25,48 @@ public class Device implements Serializable {
 	
 	private MainVerticle.DEVICE_STATE state = DEVICE_STATE.OFF;
 
-	private int fromNumber;
+	private int temperature;
 
-	private int toNumber;
+//	private int toNumber;
 	
 	//private Calendar timeStart;
-	private long timeStart;
+	private long lastUpdate;
 	
-	/** Maintains a sequence of actions tobe activated on a Device) */
-	private long actionSequence;
+//	/** Maintains a sequence of actions tobe activated on a Device) */
+//	private long actionSequence;
 
 
 	
-	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, int fromNumber,
-			int toNumber, long timeStart, long actionSequence) {
+//	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, int fromNumber,
+//			int toNumber, long timeStart, long actionSequence) {
+//		super();
+//		this.housePlanId = housePlanId;
+//		this.id = id;
+//		this.type = type;
+//		this.action = action;
+//		this.state = state;
+//		this.fromNumber = fromNumber;
+//		this.toNumber = toNumber;
+//		this.timeStart = timeStart;
+//		this.actionSequence = actionSequence;
+//	}
+
+	public Device(String housePlanId, String id, DEVICE_TYPE type, DEVICE_ACTION action, DEVICE_STATE state, int temperature, long lastUpdate) {
 		super();
 		this.housePlanId = housePlanId;
 		this.id = id;
 		this.type = type;
 		this.action = action;
 		this.state = state;
-		this.fromNumber = fromNumber;
-		this.toNumber = toNumber;
-		this.timeStart = timeStart;
-		this.actionSequence = actionSequence;
+		this.temperature = temperature;
+		this.lastUpdate = lastUpdate;
 	}
-
+	
 	public Device() {
 		super();
 	}
-
 	
-	
-	public String gethousePlanId() {
+	public String getHousePlanId() {
 		return housePlanId;
 	}
 
@@ -77,29 +86,46 @@ public class Device implements Serializable {
 		return state;
 	}
 
-	public int getFromNumber() {
-		return fromNumber;
+	public int getTemperature() {
+		return temperature;
 	}
 
-	public int getToNumber() {
-		return toNumber;
-	}
-
-	public long getTimeStart() {
-		return timeStart;
+	public long getLastUpdate() {
+		return lastUpdate;
 	}
 	
-	
+	public void setHousePlanId(String housePlanId) {
+		this.housePlanId = housePlanId;
+	}
 
-	public long getActionSequence() {
-		return actionSequence;
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public void setType(MainVerticle.DEVICE_TYPE type) {
+		this.type = type;
+	}
+
+	public void setAction(MainVerticle.DEVICE_ACTION action) {
+		this.action = action;
+	}
+
+	public void setState(MainVerticle.DEVICE_STATE state) {
+		this.state = state;
+	}
+
+	public void setTemperature(int temperature) {
+		this.temperature = temperature;
+	}
+
+	public void setLastUpdate(long lastUpdate) {
+		this.lastUpdate = lastUpdate;
 	}
 
 	@Override
 	public String toString() {
 		return "Device [housePlanId=" + housePlanId + ", id=" + id + ", type=" + type + ", action=" + action
-				+ ", state=" + state + ", fromNumber=" + fromNumber + ", toNumber=" + toNumber + ", timeStart="
-				+ timeStart + ", actionSequence=" + actionSequence + "]";
+				+ ", state=" + state + ", temperature=" + temperature + ", lastUpdate=" + lastUpdate + "]";
 	}
 
 	@Override

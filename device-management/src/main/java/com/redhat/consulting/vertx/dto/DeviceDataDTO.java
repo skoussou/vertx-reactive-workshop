@@ -1,8 +1,8 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 import java.io.Serializable;
 
-public class DeviceDataDTO implements Serializable{
+public class DeviceDataDTO implements Serializable {
 
 	/**
 	 * 

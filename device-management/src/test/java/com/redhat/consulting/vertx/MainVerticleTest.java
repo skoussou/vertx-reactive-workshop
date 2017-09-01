@@ -25,7 +25,7 @@ import com.redhat.consulting.vertx.MainVerticle.DEVICE_ACTION;
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_STATE;
 import com.redhat.consulting.vertx.MainVerticle.DEVICE_TYPE;
 import com.redhat.consulting.vertx.data.Device;
-import com.redhat.consulting.vertx.data.DeviceDTO;
+import com.redhat.consulting.vertx.dto.DeviceDTO;
 
 @RunWith(VertxUnitRunner.class)
 public class MainVerticleTest {

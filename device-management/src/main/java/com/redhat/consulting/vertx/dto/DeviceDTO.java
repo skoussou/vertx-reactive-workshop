@@ -1,6 +1,8 @@
-package com.redhat.consulting.vertx.data;
+package com.redhat.consulting.vertx.dto;
 
 import java.util.List;
+
+import com.redhat.consulting.vertx.data.Device;
 
 public class DeviceDTO {
 
