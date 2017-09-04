@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * SensorLocation data object
  * 
- * @author dsancho
+ * @author stkousso
  *
  */
 public class SensorLocationDTO implements Serializable {
@@ -58,7 +58,7 @@ public class SensorLocationDTO implements Serializable {
 
 	@Override
 	public String toString() {
-		return "SensorLocation [id=" + id + ", type=" + type + ", temperature=" + temperature + "]";
+		return "SensorLocationDTO [id=" + id + ", type=" + type + ", temperature=" + temperature + "]";
 	}
 
 }

@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * HomePlan data object
  *  
- * @author dsancho
+ * @author stkousso
  *
  */
 public class HomePlanDTO implements Serializable {

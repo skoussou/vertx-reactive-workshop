@@ -39,7 +39,7 @@ public class MainVerticle extends AbstractVerticle {
 	
 	private void startHomeplanRegulatorEventBusProvider() {
 		vertx.eventBus().<String>consumer(Constants.AMBIANBCE_DATA_ADDRESS, message -> {
-			logger.info("\n----------------------------------------------------------------------------\n HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop "+this.toString()+" \n----------------------------------------------------------------------------");	
+			logger.info("\n----------------------------------------------------------------------------\n HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop "+this.toString()+") \n----------------------------------------------------------------------------");	
 			applyHomePlanRegulation(message);
 		});
 	}
@@ -80,7 +80,7 @@ public class MainVerticle extends AbstractVerticle {
 		Future<HomePlan> future = Future.future();
 		vertx.eventBus().send(Constants.HOMEPLANS_EVENTS_ADDRESS, homeplanId, reply -> {
 			if (reply.succeeded()) {
-				logger.info("HOMEPLAN WITH ID ["+homeplanId+"] RETURNED");
+				logger.debug("HOMEPLAN WITH ID ["+homeplanId+"] RETURNED");
 				final HomePlanDTO homePlanDTO = Json.decodeValue(reply.result().body().toString(), HomePlanDTO.class);
 				final HomePlan homePlan = Mapper.toHomePlan(homePlanDTO);
 				future.complete(homePlan);
@@ -105,9 +105,9 @@ public class MainVerticle extends AbstractVerticle {
 						+"] and sensor location ["+ambianceData.getHousePlanId()+"-"+sl.getId()+"]");
 
 				if (ambianceData.getSensorLocation().getId()!= null && sl.getId() != null && ambianceData.getSensorLocation().getId().equals(sl.getId())){
-					logger.info("MATCH-FOUND: Homeplan Regulator in action on Device: "+ambianceData.getHousePlanId()+"-"+sl.getId());
-					logger.info("AMBIANCE"+Json.encodePrettily(ambianceData.getSensorLocation()));
-					logger.info("PLAN"+Json.encodePrettily(sl));
+					logger.debug("MATCH-FOUND: Homeplan Regulator in action on Device: "+ambianceData.getHousePlanId()+"-"+sl.getId());
+					logger.info("AMBIANCE"+Json.encodePrettily(ambianceData.getSensorLocation())+"\n"
+					            +"PLAN"+Json.encodePrettily(sl));
 
 					DeviceAction headerAction = applyTemperatureHomePlan(sl.getTemperature(), ambianceData.getSensorLocation().getTemperature());
 					String msgPayload = Json.encodePrettily((new DeviceActionDTO(ambianceData.getHousePlanId(), sl.getId())));

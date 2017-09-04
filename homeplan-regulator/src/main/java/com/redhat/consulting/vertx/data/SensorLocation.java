@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * SensorLocation data object
  * 
- * @author dsancho
+ * @author stkousso
  *
  */
 public class SensorLocation implements Serializable {

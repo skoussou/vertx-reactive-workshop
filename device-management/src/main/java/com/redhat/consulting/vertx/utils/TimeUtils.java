@@ -2,8 +2,6 @@ package com.redhat.consulting.vertx.utils;
 
 import java.time.Instant;
 
-import com.redhat.consulting.vertx.data.Device;
-
 public class TimeUtils {
 
 	/* UTILITY METHODS */

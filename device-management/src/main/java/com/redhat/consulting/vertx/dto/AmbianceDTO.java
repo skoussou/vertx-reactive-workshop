@@ -32,4 +32,10 @@ public class AmbianceDTO implements Serializable{
 		return sensorLocation;
 	}
 
+	@Override
+	public String toString() {
+		return "AmbianceDTO [housePlanId=" + housePlanId + ", sensorLocation=" + sensorLocation + "]";
+	}
+
+	
 }

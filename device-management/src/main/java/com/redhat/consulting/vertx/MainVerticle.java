@@ -40,60 +40,19 @@ import io.vertx.core.shareddata.SharedData;
  * Handles
  * 
  * Device Registration
- * Receives message from {@code MainVerticle.DEVICE_REGISTRATION_EVENTS_ADDRESS} 
- * Message expected format
- * {
-    id : KoussourisHouseHold, 
-    "devices" : [
-         { "type" : air-con, id : "kitchen-1},
-         { "type" : shutters, id : "kitchen-1"},
-         { "type" : air-con, id : "bedroom-1"},
-         { "type" : shutters, id : "bedroom-1"},
-         { "type" : air-con, id : "bedroom-2",}
-         { "type" : shutters, id : "bedroom-2"},
-         { "type" : air-con, id : "living-room-1"},
-         { "type" : shutters, id : "living-room-1"}
-     ]
-}
-
-
+ * Receives message from Vert.X Event Bus address '#device-reg'
+ * 
  * Device ACTION
- * Receives message from {@code MainVerticle.DEVICE_ACTION_EVENTS_ADDRESS} 
+ * Receives message from Vert.X Event Bus address '#device-action'
+ * 
  * Utilizes Header {@code MainVerticle.DEVICE_ACTION_HEADER} with possible values {@code MainVerticle.DEVICE_MANAGEMENT_ACTION} 
- * 		
- * Message expected format
- * {
-     "housePlanId" : kousourisHousehold,
-     "id" : "kitchen-1",
-     "type" : "AIRCON",
-     "action" : INCREASING,
-     "state" : ON,
-     "fromNumber" : 17,
-     "toNumber" : 22,
-     "timeStart" : null
-   }
-   
-   and for deactivate the header "TURNOFF_DEVICE"
-   {
-     "housePlanId" : kousourisHousehold,
-     "id" : "kitchen-1",
-     "type" : "AIRCON",
-     "action" : NONE,
-     "state" : OFF,
-     "fromNumber" : 0,
-     "toNumber" : 0,
-     "timeStart" : null
-   }
-   
-   
-    * Device DATA
- * Receives message from {@code MainVerticle.DEVICE_DATA_EVENTS_ADDRESS} 
-* 		
- * Message expected format
- * { id : "koussourisHousehold", sensor : "bedroom-1"} 
-  
-
+ * 	
+ * Device DATA
+ * Receives message from Vert.X Event Bus address '#device-action' and replies to the same address
  *
+ * Device UPDATE
+ * Receives message from Vert.X Event Bus address '#ambiance-data'
+ *		
  */
 public class MainVerticle extends AbstractVerticle {
 
@@ -118,7 +77,7 @@ public class MainVerticle extends AbstractVerticle {
 		
 		vertx.eventBus().<String>consumer(deviceDataEventsAddress, message -> {
 
-			logger.info("\n\n CONSUMING message from #"+deviceDataEventsAddress+ "(HANDLED BY VertX.EventLoop" + this.toString());
+			logger.info("\n CONSUMING message from #"+deviceDataEventsAddress+ "(HANDLED BY VertX.EventLoop" + this.toString()+")\n ");
 
 			// Check whether we have received a payload in the incoming message
 			if (message.body().isEmpty()) {
@@ -149,44 +108,47 @@ public class MainVerticle extends AbstractVerticle {
 	private void deviceAction(String deviceActionEventsAddress) {
 
 		vertx.eventBus().<String>consumer(deviceActionEventsAddress, message -> {
-			logger.info("\n\n CONSUMING message from #"+deviceActionEventsAddress+" (HANDLED BY VertX.EventLoop" + this.toString()+")");
 
+			String msgStart = "CONSUMING message from #"+deviceActionEventsAddress+" (HANDLED BY VertX.EventLoop" + this.toString()+")\n )";
+			
 			// Check whether we have received a payload in the incoming message
 			if (message.body().isEmpty()) {
-				logger.error(appErrorPrefix(AppErrorCode.MESSAGE_IS_EMPTY)+" Received Message on address #"+Constants.DEVICE_ACTION_EVENTS_ADDRESS+" is empty");
+				logger.error(msgStart+appErrorPrefix(AppErrorCode.MESSAGE_IS_EMPTY)+" Received Message on address #"+deviceActionEventsAddress+" is empty");
 				// SEND/REPLY example for compensation
 				// message.reply(json.put("message", "ERROR"));
 			} else {
 				DeviceAction action = DeviceAction.valueOf(message.headers().get(Constants.DEVICE_ACTION_HEADER));
 				HomePlanRegulationDTO deviceActionable = Json.decodeValue(message.body(), HomePlanRegulationDTO.class);
 				
-				logger.info("<---------------------------------------------------->");
-				logger.info(Json.encodePrettily(deviceActionable));
-				logger.info("<---------------------------------------------------->");
+				logger.info(msgStart
+						    +"<---------------------------------------------------->"
+				            + "\n ACTION: "+action
+				            + "\n "+Json.encodePrettily(deviceActionable)
+				            + "\n <---------------------------------------------------->");
 
 				Device device;
 
 				switch (action) {
 				case INCREASING:
 				case DECREASING:
-					logger.info("DEVICE: "+ generatedDeviceKey(deviceActionable)+ " is TURNED ON for ACTION: "+ action +" Applied");
+					logger.debug("DEVICE: "+ generatedDeviceKey(deviceActionable)+ " is TURNED ON for ACTION: "+ action+"\n");
 
-					device = new Device(deviceActionable.getHousePlanId(), deviceActionable.getId(), DeviceType.AIRCON, action, DeviceState.ON, 0, TimeUtils.timeInMillisNow());
+					device = new Device(deviceActionable.getHousePlanId(), deviceActionable.getId(), DeviceType.AIRCON, action, DeviceState.ON, 0, 0);
 
 					updateDevice(device, new Function<Map<String, Device>, Device>() {
 						/*
 						 * CASE 2: Function to copy devices content between actioned device and registered during an UPDATE
 						 * as a result of homeplan-regulator #device-action event
-						 * Affects state, action, lastupdate
+						 * Affects state, action
 						 */
 						public Device apply(Map<String, Device> deviceMap) { // The devices to copy from/to
 							 Device actionable = deviceMap.get(DevicesPurpose.ACTIONABLE);   
 							 Device registered = deviceMap.get(DevicesPurpose.REGISTERED);   
 
-							 logger.info("Applying DEVICE Copying Function for deviceAction.INCREASING/DECREASING");
+							 logger.trace(">>>>>>>>>>>>>>> FUNCTION COPY for INCREASING/DECREASING Action (Case 2) <<<<<<<<<<<<<<<<<<\n");
+
 							 registered.setState(actionable.getState());
 							 registered.setAction(actionable.getAction());
-							 registered.setLastUpdate(actionable.getLastUpdate());
 							 
 							// The updated device to be saved in the shared map
 							 return registered;
@@ -195,7 +157,7 @@ public class MainVerticle extends AbstractVerticle {
 
 					break;
 				case TURNOFF:
-					logger.info("DEVICE: "+ generatedDeviceKey(deviceActionable)+ " is TURNED OFF");
+					logger.debug("DEVICE: "+ generatedDeviceKey(deviceActionable)+ " is TURNED OFF");
 
 					device = new Device(deviceActionable.getHousePlanId(), deviceActionable.getId(), DeviceType.AIRCON, action, DeviceState.OFF, generateRandomLocationSensorTemperature(), 0);
 
@@ -210,7 +172,7 @@ public class MainVerticle extends AbstractVerticle {
 							 Device actionable = deviceMap.get(DevicesPurpose.ACTIONABLE);   
 							 Device registered = deviceMap.get(DevicesPurpose.REGISTERED);   
 
-							 logger.info("Applying DEVICE Copying Function for deviceAction.TURNOFF");
+							 logger.trace(">>>>>>>>>>>>>>> FUNCTION COPY for TURNOFF Action (Case 3) <<<<<<<<<<<<<<<<<<\n");
 
 							 registered = actionable;
 							 
@@ -230,7 +192,7 @@ public class MainVerticle extends AbstractVerticle {
 	private void readDevice(String deviceDataEventsAddress) {
 		vertx.eventBus().<String>consumer(deviceDataEventsAddress, message -> {
 
-			logger.info("\n\n CONSUMING message from #"+deviceDataEventsAddress+" (HANDLED BY VerX.EventLoop" + this.toString());
+			logger.info("CONSUMING message from #"+deviceDataEventsAddress+" (HANDLED BY VerX.EventLoop" + this.toString()+"\n");
 
 			// Check whether we have received a payload in the incoming message
 			if (message.body().isEmpty()) {
@@ -238,15 +200,15 @@ public class MainVerticle extends AbstractVerticle {
 				// SEND/REPLY example for compensation
 				// message.reply(json.put("message", "ERROR"));
 			} else {
-								
+
 				// We will receive it as JSON string, transform it to its class equivalent
 				DeviceDataDTO deviceDataRequested = Json.decodeValue(message.body(), DeviceDataDTO.class);
-				
-				logger.info(deviceDataRequested);
-							
-				replyDevice(generatedDeviceKey(deviceDataRequested.getHousePlanId(), deviceDataRequested.getSensor()), message);			}
+				logger.trace("Returning Requested Device Details"+deviceDataRequested+"\n");
+
+				replyDevice(generatedDeviceKey(deviceDataRequested.getHousePlanId(), deviceDataRequested.getSensor()), message);			
+			}
 		});		
-		
+
 	}
 	
 
@@ -254,30 +216,37 @@ public class MainVerticle extends AbstractVerticle {
 	private void updateDevice(String ambianceDataEventsAddress) {
 		vertx.eventBus().<String>consumer(ambianceDataEventsAddress, message -> {
 
-			logger.info("\n\n CONSUMING message from #"+ambianceDataEventsAddress+ "(HANDLED BY VertX.EventLoop" + this.toString());
 			AmbianceDTO ambianceData = Json.decodeValue(message.body(), AmbianceDTO.class);
 
-			logger.info("Device Updated on Ambiance Data PUBLISH : "+ambianceData);
+			String msgStart = "CONSUMING message from #"+ambianceDataEventsAddress+ "(HANDLED BY VertX.EventLoop" + this.toString()+")\n";
 
-			Device device = new Device(ambianceData.getHousePlanId(), ambianceData.getSensorLocation().getId(), DeviceType.AIRCON, DeviceAction.NONE, DeviceState.OFF, 0, TimeUtils.timeInMillisNow());
+			logger.info(msgStart+"RECEIVED Room Temperature Update PUBLISHED (at #"+ambianceDataEventsAddress+") "+ambianceData+"\n ");
+
+			Device device = new Device(ambianceData.getHousePlanId(), ambianceData.getSensorLocation().getId(), 
+					DeviceType.AIRCON, DeviceAction.NONE, DeviceState.OFF, ambianceData.getSensorLocation().getTemperature(), 
+					TimeUtils.timeInMillisNow());
 
 			updateDevice(device, new Function<Map<String, Device>, Device>() {
 				/*
 				 * CASE 1: Function to copy devices content between actioned device and registered during an UPDATE
 				 * as a result of sensor-generator #ambiance-data publish
-				 * Affects lastUpdate, Temperatu
+				 * Affects lastUpdate, Temperature
 				 * @return
 				 */
 				public Device apply(Map<String, Device> deviceMap) { // The devices to copy from/to
+					logger.trace(">>>>>>>>>>>>>>> FUNCTION COPY for UPDATE Action (CASE 1) <<<<<<<<<<<<<<<<<<\n");
+					
 					Device actionable = deviceMap.get(DevicesPurpose.ACTIONABLE);   
 					Device registered = deviceMap.get(DevicesPurpose.REGISTERED);   
 
-					 logger.info("Applying DEVICE Copying Function for updateDevice");					
+					logger.trace("++++++++++++++++++ REAL ACTIONABLE ++++++++++++++"+ actionable+"\n");
+					logger.trace("++++++++++++++++++ REAL REGISTERED ++++++++++++++"+ registered+"\n");
 					
-					registered.setState(actionable.getState());
-					registered.setAction(actionable.getAction());
+					registered.setTemperature(actionable.getTemperature());
 					registered.setLastUpdate(actionable.getLastUpdate());
-
+					
+					logger.trace("++++++++++++++++++ FINAL TO BE REGISTERED ++++++++++++++"+ registered+"\n");
+					
 					// The updated device to be saved in the m
 					return registered;
 				}
@@ -314,7 +283,7 @@ public class MainVerticle extends AbstractVerticle {
 			futureDevicesSharedMap.result().putIfAbsent(key, deviceRegister, ar -> {
 				if (ar.succeeded()) {
 					Device device = ar.result();
-					logger.info("\nADDED DEVICE : "+deviceRegister.getId() +" with KEY : "+key+"\n");
+					logger.info("\n REGISTERED DEVICE : "+key+" {"+deviceRegister+"}\n");
 					futureRegDevice.complete(device);
 				} else {
 					futureRegDevice.fail(appErrorPrefix(AppErrorCode.DEVICE_ALREADY_REGISTERED)+" for key "+generatedDeviceKey(deviceRegister));
@@ -355,6 +324,9 @@ public class MainVerticle extends AbstractVerticle {
 
 		futureRegisteredDevice.compose(registeredDevice -> {
 			
+			logger.trace("ACTIONABLE: --> "+deviceActionable);
+			logger.trace("REGISTERED: --> "+registeredDevice);
+			
 			HashMap copyFuncMap = new HashMap();
 			copyFuncMap.put(DevicesPurpose.ACTIONABLE,  deviceActionable);
 			copyFuncMap.put(DevicesPurpose.REGISTERED,  registeredDevice);
@@ -363,19 +335,21 @@ public class MainVerticle extends AbstractVerticle {
 				
 				Device tobeUpdated = copyDeviceContentFunc.apply(copyFuncMap);
 
+				logger.trace("TO BE UPDATE :"+tobeUpdated);
+				
 				Future<String> futureApplydDeviceUpdate = applyDeviceUpdate(tobeUpdated);
 
 
 				futureApplydDeviceUpdate.compose(updateMsg -> {
 
-					logger.info("Successful update of "+ Json.encodePrettily(updateMsg));
+					logger.info(Json.encodePrettily(updateMsg)+ "\n   TO {"+tobeUpdated+"}\n");
 
 				}, Future.future().setHandler(handler -> {
 					logger.error(vertxErrorPrefix(ErrorCode.DEVICE_MANAGEMENT_ACTIONS_BAD_ACTION), handler.cause());
 				}));
 
 			} else {
-				logger.info("Update for Device "+registeredDevice.getHousePlanId()+"-"+registeredDevice.getId()+" ignorred as Registered Temp ["+registeredDevice.getTemperature()+"] == Applied Temp ["+deviceActionable.getTemperature()+"]");
+				logger.info("Update for Device "+registeredDevice.getHousePlanId()+"-"+registeredDevice.getId()+" ignorred as Registered Temp ["+registeredDevice.getTemperature()+"] == Applied Temp ["+deviceActionable.getTemperature()+"]\n");
 			}
 
 		}, Future.future().setHandler(handler -> {
@@ -393,6 +367,7 @@ public class MainVerticle extends AbstractVerticle {
 		
 		futureDevicesSharedMap.compose(sharedMap -> {
 
+			
 			futureDevicesSharedMap.result().put(generatedDeviceKey(device), device, ar -> {
 				if (ar.succeeded()) {
 					futureUpdatedDevice.complete("Device ["+generatedDeviceKey(device)+"] successfully updated");
@@ -457,52 +432,6 @@ public class MainVerticle extends AbstractVerticle {
 //			}		
 //		});
 	}
-
-
-//	private void turnoffDevice(Device deviceActionable) {		
-//		SharedData sd = vertx.sharedData();
-//
-//		sd.<String, Device>getClusterWideMap(Constants.DEVICES_MAP, res -> {
-//			if (res.succeeded()) {
-//				// SUCCEEDED to find the DEVICES SHARED MAP
-//
-//				// GETTING THE DEVICE
-//				res.result().get(generatedDeviceKey(deviceActionable), ar -> {
-//					if (ar.succeeded()) {
-//						// HERE IT SHOULD HAVE BEEN RETRIEVED based on the key
-//						System.out.println("RETRIEVED DEVICE FROM SHARED MAP: "+ (res.result() != null ? generatedDeviceKey(ar.result()) : "NONE FOUND") +" AS : "+Json.encodePrettily(ar.result()));
-//
-//						// Check result matches one updating
-//						if (ar.result() != null && ar.result().equals(deviceActionable)){
-//
-//							// updating
-//							res.result().put(generatedDeviceKey(deviceActionable), deviceActionable, ar2 -> {
-//
-//								if (ar2.succeeded()) {
-//									// HERE IT SHOULD HAVE BEEN UPDADED on the MAP
-//									System.out.println("TURN-OFF DEVICE : "+deviceActionable.getId() +" to : "+Json.encodePrettily(deviceActionable));
-//								} else {
-//
-//									// HERE IT SHOULD HAVE failed to BE Updated on the MAP
-//									// TODO - Consider Vert.X error
-//								}
-//							});
-//						} 
-//					    else {
-//							// Trying to update a device for which there is no key registered in the Shared Map
-//							System.out.println(appErrorPrefix(AppErrorCode.NON_REGISTERED_DEVICE)+" CANNOT MATCH DEVICE with ID "+generatedDeviceKey(deviceActionable)+" with a registered Device on Shared Map data");
-//						}
-//					} else {
-//						// HERE IT SHOULD HAVE failed to BE RETREIVED from the MAP
-//						// TODO - Consider Vert.X error
-//					}
-//				});
-//			} else {
-//				// FAILED to find the MAP
-//				// TODO - Consider Vert.X error
-//			}		
-//		});
-//	}
 	
 	private Future<Device> getDevice(String key) {
 
@@ -514,6 +443,9 @@ public class MainVerticle extends AbstractVerticle {
 			futureDevicesSharedMap.result().get(key, ar -> {
 				if (ar.succeeded()) {
 					Device device = ar.result();
+					
+					logger.info("DEVICE UPDATED FROM : {"+device+"}\n" );
+					
 					if (device != null) {
 						futureRegDevice.complete(device);
 					} else {
@@ -546,7 +478,7 @@ public class MainVerticle extends AbstractVerticle {
 							
 							DeviceDTO dto = new DeviceDTO(device.getHousePlanId(), device.getId(), device.getType(), device.getAction(), device.getState(), device.getTemperature(), device.getLastUpdate());
 							
-							logger.info("\n\n REPLYING to message FOUND DEVICE \n ------------------------------------------------------------------- \n "+Json.encodePrettily(device)+" \n -------------------------------------------------------------------");
+							logger.info("\n\n REPLYING to (#"+Constants.DEVICE_DATA_EVENTS_ADDRESS+") message FOUND DEVICE ("+key+") \n ------------------------------------------------------------------- \n "+Json.encodePrettily(device)+" \n -------------------------------------------------------------------");
 							message.reply(Json.encodePrettily(dto));
 
 						} else {
