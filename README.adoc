@@ -30,27 +30,6 @@ FOLLOWED by 15 MINUTES explain the solution
 - EventLoop
 - Launcher
 
-== Organizers
-
-. STEP 1     (ALL steps/names provided) Creatd a vertx project (using mvn archetype) 
-
-[source,perl]
-----
-mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
-----
-. STEP 2      (ALL steps/names provided) Review Verticle 
-                 .. create a HelloWorld HTTP SERVER
-                 ..  TEST IT
-                 .. check EXTEND, check pom.xml etc.
-. STEP 3      REAL LAB : generate the HTTP server & Use ROUTER to define the endpoints
-     - (US) provide a method to get/save the HomePlan into the shared data a LOCAL Varaibale
-     - (US) provide a dummy method for "send device reg event"
-     - (US) Hoe to encode/decode JSON??
-     - (US) Objects
-
-* as an extra show  DURING last 15 minutes 
-* how to start multiple Verticle Instances and what it means from HTTP 
-* Request handling (Event Loop, Verticle Instance)
 
 == Participants
 
@@ -68,7 +47,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
     - Start the Vert.X eventloop locally with the following command accessing in the end http://127.0.0.1:8080 for the default implementaiton
       [source,perl]
       ----
-      mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+      mvn compile vertx:run
       ----
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
@@ -87,30 +66,29 @@ private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
 ---- 
 * *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
-      ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet)
+      ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet) to retrieve all registerd homeplan IDs
 
 [source,perl]
 ----
 private void getAll(RoutingContext routingContext) {
 logger.info("Getting all homeplan ids available");
-          String [] dummyIds = new String[]{"KousourisHousePlan", "SanchoHousePlan"};
+
           logger.info("Returning Dummy Homeplan IDs ", Json.encodePrettily(dummyIds));
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(dummyIds));
+								.end(Json.encodePrettily(homeplans.keySet()));
 }
 ----
-
       *TEST*
 
 [source,perl]
 ----
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+mvn compile vertx:run
 
 On a browser
 http://127.0.0.0:8181/homeplan
 ----
        
-      ** Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning a single HomePlan)
+      ** Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning the contents of a single HomePlan
 
 [source,perl]
 ----
@@ -124,16 +102,17 @@ private void getOne(RoutingContext routingContext) {
       }
 ----
 
-      *TEST*
+*TEST*
 
 [source,perl]
 ----
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+mvn compile vertx:run
+
 On a browser
 http://127.0.0.0:8181/homeplan/KousourisHouseplan
 ----
 
-      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) updating a single HomePlan)
+      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) registering a single HomePlan
 
 [source,perl]
 ----
@@ -147,21 +126,23 @@ private void addOne(RoutingContext routingContext) {
 }
 ----
 
-*TEST*
+*TEST*ing
 
-[source,perl]
+
 ----
+mvn compile vertx:run
 curl -d "@testA.json" -X POST http://127.0.0.0:8181/homeplan/KousourisHouseplan
 
 testA.json CONTENTS
 { "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"22\"]}, {[\"bedroom\", \"bedroom-1\", \"23\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
 ----
 
-      ** Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan)
+      ** Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan
 
-*TEST*
+TEST
 
 ----
+mvn compile vertx:run
 curl -d "@testB.json" -X PUT http://127.0.0.0:8181/homeplan/KousourisHouseplan
 
 testB.json CONTENTS
@@ -195,6 +176,34 @@ All of the above will require the following class
 	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
      }
 ----
+
+
+== Organizers
+
+. STEP 1     (ALL steps/names provided) Creatd a vertx project (using mvn archetype) 
+
+[source,perl]
+----
+mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
+----
+. STEP 2      (ALL steps/names provided) Review Verticle 
+                 .. create a HelloWorld HTTP SERVER
+                 ..  TEST IT
+                 .. check EXTEND, check pom.xml etc.
+. STEP 3      REAL LAB : generate the HTTP server & Use ROUTER to define the endpoints
+     - (US) provide a method to get/save the HomePlan into the shared data a LOCAL Varaibale
+     - (US) provide a dummy method for "send device reg event"
+     - (US) Hoe to encode/decode JSON??
+     - (US) Objects
+
+* as an extra show  DURING last 15 minutes 
+* how to start multiple Verticle Instances and what it means from HTTP 
+* Request handling (Event Loop, Verticle Instance)
+
+
+
+
+
 
 . HTTP Server & simple service calling (problem not-reactive as not resillient/scalable)
     .. Create Content for verticles in HomePlan
