@@ -57,7 +57,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 
 [source,perl]
 
-. STEP 1     	Create a Vert.X maven project wit the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
+=== STEP 1 - Create a Vert.X maven project wit the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
 
     [source,perl]
     ----
@@ -71,22 +71,23 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
       mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
       ----
 
-. STEP 2	In this step you will create an HTTP server and expose *_homeplan_* service endpoints
-  .. *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
-  .. Add logging into the MainVerticle.java choosing the io.vertx.core.* logging imports
+=== STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
+  . *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
+  . Add logging into the MainVerticle.java choosing the io.vertx.core.* logging imports
+   
       [source,perl]
       ----
       private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
       ----
-  .. Create a member variable to hold submitted Homeplans 
+  . Create a member variable to hold submitted Homeplans 
       
       [source,perl]
       ----
       private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
       ---- 
 
-  .. *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
-      ... Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet)
+  . *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
+      .. Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet)
 
       [source,perl]
       ----
@@ -110,7 +111,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 
       ----
        
-      ... Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning a single HomePlan)
+      .. Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning a single HomePlan)
 
       [source,perl]
       ----
@@ -134,7 +135,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
       http://127.0.0.0:8181/homeplan/KousourisHouseplan
       ----
 
-      ... Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) updating a single HomePlan)
+      .. Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) updating a single HomePlan)
 
       [source,perl]
       ----
@@ -157,7 +158,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 
       ----
 
-      ... Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan)
+      .. Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan)
 
       * TEST *
       [source,perl]
