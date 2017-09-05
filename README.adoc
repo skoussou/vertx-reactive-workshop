@@ -58,10 +58,11 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 [source,perl]
 
 . STEP 1     	Create a Vert.X maven project wit the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
-[source,perl]
-----
-mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
-----
+
+    [source,perl]
+    ----
+    mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
+    ----
 
     - Inspect MainVerticle.java and the AbstractVerticle to identify getting access to the Vertx instance
     - Start the Vert.X eventloop locally with the following command accessing in the end http://127.0.0.1:8080 for the default implementaiton
@@ -78,12 +79,15 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
       private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
       ----
   .. Create a member variable to hold submitted Homeplans 
+      
       [source,perl]
       ----
       private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
       ---- 
+
   .. *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
       ... Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet)
+
       [source,perl]
       ----
       private void getAll(RoutingContext routingContext) {
@@ -103,9 +107,11 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 
       On a browser
       http://127.0.0.0:8181/homeplan
+
       ----
        
       ... Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning a single HomePlan)
+
       [source,perl]
       ----
       private void getOne(RoutingContext routingContext) {
@@ -129,6 +135,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
       ----
 
       ... Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) updating a single HomePlan)
+
       [source,perl]
       ----
 	private void addOne(RoutingContext routingContext) {
@@ -162,9 +169,10 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
       ----
       
 All of the above will require the following class
+
       [source,perl]
       ----
-public class Constants {
+     public class Constants {
 
 	// Rest
 	//public static final String ROOT_PATH = "/homeplan";
@@ -185,7 +193,7 @@ public class Constants {
 	public static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
 	
 	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
-}
+     }
       ----
 
 . HTTP Server & simple service calling (problem not-reactive as not resillient/scalable)
