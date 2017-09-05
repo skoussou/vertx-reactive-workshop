@@ -36,7 +36,7 @@ FOLLOWED by 15 MINUTES explain the solution
 
 [source,perl]
 
-==== STEP 1 - Create a Vert.X maven project wit the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
+==== STEP 1 - Create a Vert.X maven project with the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
 
 [source,perl]
 ----
@@ -202,9 +202,10 @@ All of the above will require the following class
 
 ====  STEP 3 Threading, Event Loop instances
 
+*TO BE COMPLETED*
 
 * as an extra show  DURING last 15 minutes 
-* how to start multiple Verticle Instances and what it means from HTTP 
+* how to start multiple Verticle Instances and what it means from HTTP *(Launcher manages that ... ned to find how in pom.xml). Also show that in starting anothe Verticle)*
 * Request handling (Event Loop, Verticle Instance)
 
 
