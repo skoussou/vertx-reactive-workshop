@@ -57,12 +57,12 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 
 [source,perl]
 
-=== STEP 1 - Create a Vert.X maven project wit the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
+==== STEP 1 - Create a Vert.X maven project wit the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
 
-    [source,perl]
-    ----
-    mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
-    ----
+[source,perl]
+----
+mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
+----
 
     - Inspect MainVerticle.java and the AbstractVerticle to identify getting access to the Vertx instance
     - Start the Vert.X eventloop locally with the following command accessing in the end http://127.0.0.1:8080 for the default implementaiton
@@ -71,52 +71,50 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
       mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
       ----
 
-=== STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
+====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
   . *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
-  . Add logging into the MainVerticle.java choosing the io.vertx.core.* logging imports
+  . Add logging into the MainVerticle.java choosing the */io.vertx.core.*_* logging imports
    
-      [source,perl]
-      ----
-      private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
-      ----
+[source,perl]
+----
+private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
+----
+
   . Create a member variable to hold submitted Homeplans 
       
-      [source,perl]
-      ----
-      private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
-      ---- 
-
+[source,perl]
+----
+private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
+---- 
   . *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
       .. Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet)
 
-      [source,perl]
-      ----
-      private void getAll(RoutingContext routingContext) {
-
-	  logger.info("Getting all homeplan ids available");
+[source,perl]
+----
+private void getAll(RoutingContext routingContext) {
+logger.info("Getting all homeplan ids available");
           String [] dummyIds = new String[]{"KousourisHousePlan", "SanchoHousePlan"};
           logger.info("Returning Dummy Homeplan IDs ", Json.encodePrettily(dummyIds));
 						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
 								.end(Json.encodePrettily(dummyIds));
-      }
-      ----
+}
+----
 
-      * TEST *
-      [source,perl]
-      ----
-      mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+      *TEST*
 
-      On a browser
-      http://127.0.0.0:8181/homeplan
+[source,perl]
+----
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
-      ----
+On a browser
+http://127.0.0.0:8181/homeplan
+----
        
       .. Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning a single HomePlan)
 
-      [source,perl]
-      ----
-      private void getOne(RoutingContext routingContext) {
-
+[source,perl]
+----
+private void getOne(RoutingContext routingContext) {
                 if (homeplans.get(routingContext.pathParam(Constants.ID_PARAM) != null) {
 		    routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
 						.end(Json.encodePrettily(homeplans.get(routingContext.pathParam(Constants.ID_PARAM))));
@@ -124,55 +122,54 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
                     routingContext.fail(404);
 		}
       }
-      ----
+----
 
-      * TEST *
-      [source,perl]
-      ----
-      mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-      On a browser
-      http://127.0.0.0:8181/homeplan/KousourisHouseplan
-      ----
+      *TEST*
+[source,perl]
+----
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+On a browser
+http://127.0.0.0:8181/homeplan/KousourisHouseplan
+----
 
       .. Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) updating a single HomePlan)
 
-      [source,perl]
-      ----
-	private void addOne(RoutingContext routingContext) {
+[source,perl]
+----
+private void addOne(RoutingContext routingContext) {
                 final String homeplanId = routingContext.pathParam(Constants.ID_PARAM);
 		final String homePlan = (List<String) Json.decodeValue(routingContext.getBodyAsString(), String.class);
 
                 homePlans.put(homeplanId, homePlan);
 
                 logger.info("Sending event to address {0} to register devices", Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS);
-	}
-      ----
+}
+----
 
-      * TEST *
-      [source,perl]
-      ----
-      curl -d "@testa.json" -X POST http://127.0.0.0:8181/homeplan/KousourisHouseplan
+      *TEST*
 
-      { "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"22\"]}, {[\"bedroom\", \"bedroom-1\", \"23\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
-
-      ----
+[source,perl]
+----
+curl -d "@testA.json" -X POST http://127.0.0.0:8181/homeplan/KousourisHouseplan
+testA.json CONTENTS
+{ "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"22\"]}, {[\"bedroom\", \"bedroom-1\", \"23\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
+----
 
       .. Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan)
 
       * TEST *
-      [source,perl]
-      ----
-      curl -d "@testa.json" -X PUT http://127.0.0.0:8181/homeplan/KousourisHouseplan
 
-      { "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"30\"]}, {[\"bedroom\", \"bedroom-1\", \"35\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
-
-      ----
+[source,perl]
+----
+curl -d "@testB.json" -X PUT http://127.0.0.0:8181/homeplan/KousourisHouseplan
+testB.json CONTENTS
+{ "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"30\"]}, {[\"bedroom\", \"bedroom-1\", \"35\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
+----
       
 All of the above will require the following class
 
-      [source,perl]
-      ----
+
+----
      public class Constants {
 
 	// Rest
@@ -195,7 +192,7 @@ All of the above will require the following class
 	
 	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
      }
-      ----
+----
 
 . HTTP Server & simple service calling (problem not-reactive as not resillient/scalable)
     .. Create Content for verticles in HomePlan
