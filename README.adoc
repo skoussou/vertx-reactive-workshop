@@ -58,8 +58,6 @@ mvn compile vertx:run
 * *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
   ** As a final step expose a "Hello World" message on a GET request to the *_/_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
-----
-
 
 * Add logging into the MainVerticle.java choosing the */io.vertx.core.*_* logging imports
    
