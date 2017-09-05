@@ -43,16 +43,24 @@ FOLLOWED by 15 MINUTES explain the solution
 mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
 ----
 
-    - Inspect MainVerticle.java and the AbstractVerticle to identify getting access to the Vertx instance
-    - Start the Vert.X eventloop locally with the following command accessing in the end http://127.0.0.1:8080 for the default implementaiton
+    - Inspect *_MainVerticle.java_*and the AbstractVerticle to identify getting access to the Vertx instance
+    - Start the Vert.X eventloop locally with the following command and check the logs to ensure the Verticle has been successfully started
 
 [source,perl]
 ----
 mvn compile vertx:run
 ----
 
+    - Make a change on *_MainVerticle.java_* and press 'Save'. You will see in the command line the *_vertx-maven-plugin_* fabric8 plugin redeploying the verticle
+
+
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
 * *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
+  ** As a final step expose a "Hello World" message on a GET request to the *_/_* path of the HTTP server
+  ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
+----
+
+
 * Add logging into the MainVerticle.java choosing the */io.vertx.core.*_* logging imports
    
 [source,perl]
@@ -66,6 +74,7 @@ private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 ----
 private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
 ---- 
+
 * *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
       ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet) to retrieve all registerd homeplan IDs
 
@@ -178,6 +187,12 @@ All of the above will require the following class
 	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
      }
 ----
+
+
+====  STEP 3 Threading, Event Loop instances
+
+
+
 
 
 == Organizers
