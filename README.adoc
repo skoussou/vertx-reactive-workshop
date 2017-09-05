@@ -125,6 +125,7 @@ private void getOne(RoutingContext routingContext) {
 ----
 
       *TEST*
+
 [source,perl]
 ----
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
@@ -151,17 +152,18 @@ private void addOne(RoutingContext routingContext) {
 [source,perl]
 ----
 curl -d "@testA.json" -X POST http://127.0.0.0:8181/homeplan/KousourisHouseplan
+
 testA.json CONTENTS
 { "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"22\"]}, {[\"bedroom\", \"bedroom-1\", \"23\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
 ----
 
       .. Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan)
 
-      * TEST *
+      *TEST*
 
-[source,perl]
 ----
 curl -d "@testB.json" -X PUT http://127.0.0.0:8181/homeplan/KousourisHouseplan
+
 testB.json CONTENTS
 { "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"30\"]}, {[\"bedroom\", \"bedroom-1\", \"35\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
 ----
