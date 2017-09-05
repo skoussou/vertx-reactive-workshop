@@ -43,7 +43,7 @@ FOLLOWED by 15 MINUTES explain the solution
 mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
 ----
 
-    - Inspect *_MainVerticle.java_*and the AbstractVerticle to identify getting access to the Vertx instance
+    - Inspect *_MainVerticle.java_* and the AbstractVerticle to identify getting access to the Vertx instance
     - Start the Vert.X eventloop locally with the following command and check the logs to ensure the Verticle has been successfully started
 
 [source,perl]
@@ -59,7 +59,7 @@ mvn compile vertx:run
   ** As a final step expose a "Hello World" message on a GET request to the *_/_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
 
-* Add logging into the MainVerticle.java choosing the */io.vertx.core.*_* logging imports
+* Add logging into the *_MainVerticle.java_* choosing the *_io.vertx.core.*;_* logging imports
    
 [source,perl]
 ----
@@ -70,7 +70,7 @@ private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
       
 [source,perl]
 ----
-private Map<String, String> homeplans= new HashMap<String, Map<String, List<String>>>();
+private Map<String, String> homeplans= new HashMap<String, String>();
 ---- 
 
 * *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
@@ -78,13 +78,19 @@ private Map<String, String> homeplans= new HashMap<String, Map<String, List<Stri
 
 [source,perl]
 ----
-private void getAll(RoutingContext routingContext) {
-logger.info("Getting all homeplan ids available");
+    private void getAll(RoutingContext routingContext) {
+    	logger.info("Getting all homeplan ids available");
 
-          logger.info("Returning Dummy Homeplan IDs ", Json.encodePrettily(dummyIds));
-						routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-								.end(Json.encodePrettily(homeplans.keySet()));
-}
+    	if (homeplans.keySet().size() != 0){
+    		logger.info("Returning Homeplan IDs ", Json.encodePrettily(homeplans.keySet()));
+        	routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+        	.end(Json.encodePrettily(homeplans.keySet()));
+    	} else {
+    		logger.info("No Homeplans Registered as yet");
+        	routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+        	.end(Json.encodePrettily("No Homeplans Registered as yet"));
+    	}
+    }
 ----
 
 *TEST*
@@ -97,18 +103,18 @@ On a browser
 http://127.0.0.0:8181/homeplan
 ----
        
-      ** Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning the contents of a single HomePlan
+      ** Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning the contents of a single HomePlan (Note: utilize Constants.ID_PARAM)
 
 [source,perl]
 ----
-private void getOne(RoutingContext routingContext) {
-                if (homeplans.get(routingContext.pathParam(Constants.ID_PARAM) != null) {
-		    routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
-						.end(Json.encodePrettily(homeplans.get(routingContext.pathParam(Constants.ID_PARAM))));
-		} else {
-                    routingContext.fail(404);
-		}
-      }
+    private void getOne(RoutingContext routingContext) {
+    	if (homeplans.get(routingContext.pathParam(Constants.ID_PARAM)) != null) {
+    		routingContext.response().putHeader("content-type", "application/json; charset=utf-8")
+    		.end(Json.encodePrettily(homeplans.get(routingContext.pathParam(Constants.ID_PARAM))));
+    	} else {
+    		routingContext.fail(404);
+    	}
+    
 ----
 
 *TEST*
@@ -125,14 +131,20 @@ http://127.0.0.0:8181/homeplan/KousourisHouseplan
 
 [source,perl]
 ----
-private void addOne(RoutingContext routingContext) {
-                final String homeplanId = routingContext.pathParam(Constants.ID_PARAM);
-		final String homePlan = Json.decodeValue(routingContext.getBodyAsString(), String.class);
+    private void addOne(RoutingContext routingContext) {
+    	final String homeplanId = routingContext.pathParam(Constants.ID_PARAM);
+    	final String homePlan = routingContext.getBodyAsString();
+	
+    	homeplans.put(homeplanId, homePlan);
 
-                homePlans.put(homeplanId, homePlan);
-
-                logger.info("Sending event to address {0} to register devices", Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS);
-}
+    	logger.info("Registering Homeplan ["+homeplanId+"] with content ["+homePlan+"]");
+    	
+    	logger.info("Sending event to address #{0} to register devices", Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS);
+    	
+    	routingContext.response().setStatusCode(201)
+		.putHeader("content-type", "application/json; charset=utf-8")
+		.end(Json.encodePrettily(homePlan));
+    }
 ----
 
 *TEST*
@@ -140,10 +152,11 @@ private void addOne(RoutingContext routingContext) {
 
 ----
 mvn compile vertx:run
-curl -d "@testA.json" -X POST http://127.0.0.0:8181/homeplan/KousourisHouseplan
+curl -H "Content-Type: application/json" -X POST -d '@sanchoA.json'  http://127.0.0.1:8181/homeplan/Sancho
 
-testA.json CONTENTS
-{ "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"22\"]}, {[\"bedroom\", \"bedroom-1\", \"23\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
+sanchoA.json CONTENTS
+{ "SanschoHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
+
 ----
 
       ** Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan
@@ -152,10 +165,10 @@ testA.json CONTENTS
 
 ----
 mvn compile vertx:run
-curl -d "@testB.json" -X PUT http://127.0.0.0:8181/homeplan/KousourisHouseplan
+curl -H "Content-Type: application/json" -X PUT -d '@sanchoB.json'  http://127.0.0.1:8181/homeplan/Sancho
 
 testB.json CONTENTS
-{ "\"sensorLocations\" : [{[\"kitchen\", \"kitchen-1\", \"30\"]}, {[\"bedroom\", \"bedroom-1\", \"35\"]}], \"devices\" : [{[\"AIRCON\", \"kitchen-1\"]}, {[\"AIRCON\", \"bedroom-1\"]}]"  }
+{ "SanschoHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "30"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "33"], "devices" : ["AIRCON", "bedroom-1"]}]}
 ----
       
 All of the above will require the following class
@@ -190,60 +203,9 @@ All of the above will require the following class
 ====  STEP 3 Threading, Event Loop instances
 
 
-
-
-
-== Organizers
-
-. STEP 1     (ALL steps/names provided) Creatd a vertx project (using mvn archetype) 
-
-[source,perl]
-----
-mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
-----
-. STEP 2      (ALL steps/names provided) Review Verticle 
-                 .. create a HelloWorld HTTP SERVER
-                 ..  TEST IT
-                 .. check EXTEND, check pom.xml etc.
-. STEP 3      REAL LAB : generate the HTTP server & Use ROUTER to define the endpoints
-     - (US) provide a method to get/save the HomePlan into the shared data a LOCAL Varaibale
-     - (US) provide a dummy method for "send device reg event"
-     - (US) Hoe to encode/decode JSON??
-     - (US) Objects
-
 * as an extra show  DURING last 15 minutes 
 * how to start multiple Verticle Instances and what it means from HTTP 
 * Request handling (Event Loop, Verticle Instance)
 
 
-
-
-
-
-. HTTP Server & simple service calling (problem not-reactive as not resillient/scalable)
-    .. Create Content for verticles in HomePlan
-    ..  [REST] [GET] /homeplan/{id}
-    ..  [REST] [POST/PUT/GET] /homeplan 
-. TESTS
-Run Vert.X outside OCP with vertx-maven-plugin
-[source,perl]
-----
-  mvn compile vertx:run"
-----
-
-   . REGISTER Homeplan
-   . GET all IDs of Homeplans Registred
-   . GET Homeplan by ID
-   . UPDATE Homeplan
-
-     Run outside OCP
-     Pre-Requisites: send device-reg message (we provide dummy console log output)
-
-= LAB 2
-
-= LAB 3
-
-= LAB 4
-
-= LAB 5
 
