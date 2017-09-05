@@ -45,10 +45,11 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 
     - Inspect MainVerticle.java and the AbstractVerticle to identify getting access to the Vertx instance
     - Start the Vert.X eventloop locally with the following command accessing in the end http://127.0.0.1:8080 for the default implementaiton
-      [source,perl]
-      ----
-      mvn compile vertx:run
-      ----
+
+[source,perl]
+----
+mvn compile vertx:run
+----
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
 * *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
@@ -78,7 +79,8 @@ logger.info("Getting all homeplan ids available");
 								.end(Json.encodePrettily(homeplans.keySet()));
 }
 ----
-      *TEST*
+
+*TEST*
 
 [source,perl]
 ----
@@ -118,7 +120,7 @@ http://127.0.0.0:8181/homeplan/KousourisHouseplan
 ----
 private void addOne(RoutingContext routingContext) {
                 final String homeplanId = routingContext.pathParam(Constants.ID_PARAM);
-		final String homePlan = (List<String) Json.decodeValue(routingContext.getBodyAsString(), String.class);
+		final String homePlan = Json.decodeValue(routingContext.getBodyAsString(), String.class);
 
                 homePlans.put(homeplanId, homePlan);
 
@@ -126,7 +128,7 @@ private void addOne(RoutingContext routingContext) {
 }
 ----
 
-*TEST*ing
+*TEST*
 
 
 ----
@@ -139,7 +141,7 @@ testA.json CONTENTS
 
       ** Expose a *PUT* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the above code snipet) updating a single HomePlan
 
-TEST
+*TEST*
 
 ----
 mvn compile vertx:run
