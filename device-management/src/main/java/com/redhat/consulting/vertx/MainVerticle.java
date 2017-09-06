@@ -63,9 +63,6 @@ public class MainVerticle extends AbstractVerticle {
 		logger.info("\n----------------------------------------------------------------------------\n STARTING DEVICE Management - MainVerticle \n----------------------------------------------------------------------------");
 	
 		registerDevices(Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS);
-		//deviceAction(Constants.DEVICE_ACTION_EVENTS_ADDRESS);
-		//readDevice(Constants.DEVICE_DATA_EVENTS_ADDRESS);
-		//updateDevice(Constants.AMBIANCE_DATA_EVENTS_ADDRESS);
 		
 	}
 	

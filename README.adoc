@@ -29,28 +29,73 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 == Organizers
 
-. Provide solution from - LAB-1 in branch LAB-1 
-. Pre-Requisites: and cluster it (infinispan) --> PROVIDE as part of the INITIAL version of LAB 1 Solution
+* Provide solution from - LAB-1 in branch LAB-1 
+* Pre-Requisites: and cluster it (infinispan) --> PROVIDE as part of the INITIAL version of LAB 1 Solution
 
 
 == PARTICIPANTS
 
-.Maven Command To Run VertX outside OCP
+==== STEP 1 - Start a clusttered Vert.x application
+* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 2*
+* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place
+
+Maven Command To Run VertX outside OCP
 ----
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
 mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
+mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+* Read on Vert.x clustering and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
 ----
 
-. clone/unzip "ReactiveVertX Branch - LAB 1"
-. Create Content for verticles in _device-management_ service
-  .. consume: Messages from #device-reg on the bus and complete register Device action
-  .. ADD the devices into a shared-map (as in previous lab point ....) --WE WILL PROVIDE METHOD FOR THIS
-  .. Log operation on console??? WE WILL PROVIDE METHOD FOR THIS THEY JUST NEED TO PUT THE LOGGING
+==== STEP 2 - Create content for the following parts of the scenario
+* Create Content for verticles in _*homeplan*_ maven project to complete the service
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* to *_send_* Messages to #device-reg on the bus
+    *** Test by executing the following request and check the console of the device-management Verticle for output showing *_FIXME - REGISTRATION HAS NOT TAKEN PLACE_*
 
-. Create Content for verticles in _*homeplan*_
-  .. send: Messages to #device-reg on the bus (REMOVE DUMMY IMPLEMENTATION and implement content of sendDevicesRegistration method
+----
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
+mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
-. TESTS
-   .. Register HomePlan and seeing on console the devices being registered (give REST Calls)
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
+mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+curl -H "Content-Type: application/json" -X POST -d '@kousourisA.json'  http://127.0.0.1:8080/homeplan/KousourisHomePlan
+
+kousourisA.json CONTENTS
+{ "KousourisHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
+
+
+* Create Content for verticles in *_device-management_* maven project to complete the service
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from #device-reg EventBus address and complete register Device action
+    *** Test by executing the following request and check the console of the device-management Verticle for output *_Handler for adding Device ["DEVICE CONTENT"] is missing. You need to complete it_*
+
+----
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
+mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
+mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+curl -H "Content-Type: application/json" -X POST -d '@kousourisA.json'  http://127.0.0.1:8080/homeplan/KousourisHomePlan
+
+kousourisA.json CONTENTS
+{ "KousourisHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
+----
+
+  ** Using resources at ttp://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_registerDevice_* and PUT the devices into a shared-map
+    ** Use the above test and now each device should be showing as registered in the logs
+
+
+
 
 
 
