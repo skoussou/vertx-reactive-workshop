@@ -24,8 +24,8 @@ FOLLOWED by 15 MINUTES reviewing the solution
 == Concepts visited in this LAB
 
 * http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus with SEND/REPLY pattern
-* We will see Vert.x Reacting via handlers
-* We will see Reacting via Futures
+* Vert.x Reacting via handlers
+* Vert.x Reacting via Futures
 * http://vertx.io/docs/vertx-web-client/java/[HTTP Rest Client]
 
 
@@ -33,7 +33,7 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 ==== STEP 1 - Start a clustered Vert.x application
 * clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 3*
-* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 2 members
+* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 3 members
 
 ----
 open new terminal
@@ -53,7 +53,13 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ==== STEP 2 - Create content for the following parts of the scenario
 * Create Content for verticles in *_sensor-generator_* maven project to complete the service
   ** Using resources at http://vertx.io/docs/vertx-web-client/java/[Web Client] Fix method *_getHomePlanIds()_* to make RESTful *GET* call to endpoint */homeplan* to retrieve the *ids* of the registred homeplans
-    *** Test the added functionality by executing the following request and checking on the *_sensort-generator_* Vert.x application for the output showing the received homeplan Ids (the same can also be inspected at the *_homeplan_* Vert.x applicatoin console which is serving the request)
+    *** Test the added functionality by executing the following request and checking on the *_sensor-generator_* Vert.x application for the output showing the received homeplan Ids (the same can also be inspected at the *_homeplan_* Vert.x applicatoin console which is serving the request)
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *_getHomePlan()_* to send the given homeplan id to address *_#homeplan_*
+     and expect a reply of the HomePlanDTO corresponding to this ID
+    *** To test upon saving redeployment should give you the outcome desired
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *_getDeviceStatus()_* to send the given sensor id to address *_#device-data_*
+     and expect a reply of the DeviceStatusDTO corresponding to this ID
+    *** To test upon saving redeployment you should get the error since no REPLY on this addres has been implemented yet. This will be tested along the next part of the lab
 ----
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
@@ -72,12 +78,6 @@ cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
 url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *getHomePlan()_* to send the given homeplan id to address *_#homeplan*
-     and expect a reply of the HomePlanDTO corresponding to this ID
-    *** To test upon saving redeployment should give you the outcome desired
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *getDeviceStatus()_* to send the given sensor id to address *_#device-data_*
-     and expect a reply of the DeviceStatusDTO corresponding to this ID
-    *** To test upon saving redeployment you should get the error since no REPLY on this addres has been implemented yet. This will be tested along the next part of the lab
 
 * Create Content for verticles in *_homeplan_* maven project to complete the service
   ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyWithHomeplan(Message<String> message)_* to *_reply_* to a consumed request on *_#homeplans_* address on the bus with the identified homeplan details
@@ -98,28 +98,6 @@ mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true
 
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan/data
-url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
-----
-
-* Create Content for verticles in *_device-management_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from *_#device-reg_* EventBus address and complete register Device action
-    *** Test by executing the following request and check the console of the device-management Verticle for output *_Handler for adding Device ["DEVICE CONTENT"] is missing. You need to complete it_*
-
-----
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
 url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
