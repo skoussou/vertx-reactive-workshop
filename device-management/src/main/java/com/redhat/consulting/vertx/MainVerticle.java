@@ -142,5 +142,13 @@ public class MainVerticle extends AbstractVerticle {
 	private String generatedDeviceKey(String housePlanId, String deviceId) {
 		return housePlanId+Constants.DEVICES_ID_SEPARATOR+deviceId;
 	}
+
+	/* Used in registration and in turn off activities on a Device object */
+	private int generateRandomLocationSensorTemperature(){
+		Random rn = new Random();
+		return (rn.nextInt(45 - 13 + 1) + 13);
+	}
+
 	
+
 }

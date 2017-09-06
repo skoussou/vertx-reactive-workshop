@@ -31,15 +31,15 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 ==== STEP 1 - Start a clustered Vert.x application
 * clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 2*
-* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place
+* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 2 members
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
@@ -48,21 +48,21 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ==== STEP 2 - Create content for the following parts of the scenario
 * Create Content for verticles in *_homeplan_* maven project to complete the service
   ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* to *_send_* Messages to *_#device-reg_* on the bus
-    *** Test by executing the following request and check the console of the *_device-management_* Verticle for output showing *_FIXME - REGISTRATION HAS NOT TAKEN PLACE_*
+    *** Test by executing the following request and check the console of the *_homeplan_* Vert.x application for output showing the registration taking place. Note, you will get a "Internal Error" on the
+        console of the client call as the consuming of the message is not currently implemented
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan
 mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
 mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
-curl -H "Content-Type: application/json" -X POST -d '@kousourisA.json'  http://127.0.0.1:8080/homeplan/KousourisHomePlan
-
-kousourisA.json CONTENTS
-{ "KousourisHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan/data
+url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
 * Create Content for verticles in *_device-management_* maven project to complete the service
@@ -71,17 +71,16 @@ kousourisA.json CONTENTS
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan
 mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
 mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
-curl -H "Content-Type: application/json" -X POST -d '@kousourisA.json'  http://127.0.0.1:8080/homeplan/KousourisHomePlan
-
-kousourisA.json CONTENTS
-{ "KousourisHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan/data
+curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
   ** Using resources at http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_registerDevice_* and PUT the devices into a shared-map
