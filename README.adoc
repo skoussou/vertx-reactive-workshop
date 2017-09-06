@@ -53,7 +53,7 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ==== STEP 2 - Create content for the following parts of the scenario
 * Create Content for verticles in *_sensor-generator_* maven project to complete the service
   ** Using resources at http://vertx.io/docs/vertx-web-client/java/[Web Client] Fix method *_getHomePlanIds()_* to make RESTful *GET* call to endpoint */homeplan* to retrieve the *ids* of the registred homeplans
-    *** Test the added functionality by executing the following request and checking on the *_sensor-generator_* Vert.x application for the output showing the received homeplan Ids (the same can also be inspected at the *_homeplan_* Vert.x applicatoin console which is serving the request)
+    *** Test the added functionality by executing the request below and checking on the *_sensor-generator_* Vert.x application for the output showing the received homeplan Ids and that the message has been changed _"NFO: FIXME - Getting all homeplans ids"_ for another _"INFO: FIXME - Sending event to address homeplans to get homeplan details for id test3"_ (the same can also be inspected at the *_homeplan_* Vert.x applicatoin console which is serving the request)
   ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *_getHomePlan()_* to send the given homeplan id to address *_#homeplan_*
      and expect a reply of the HomePlanDTO corresponding to this ID
     *** To test upon saving redeployment should give you the outcome desired
