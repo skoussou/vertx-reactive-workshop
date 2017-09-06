@@ -16,17 +16,16 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 * The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
-
 = LAB 2
 
 TIME ESTIMATION 30 MINUTES
-FOLLOWED by 15 MINUTES explain the solution
+FOLLOWED by 15 MINUTES reviewing the solution
 
-== Concepts to be taught in this LAB:
+== Concepts visited in this LAB
 
-- What is and how to use the EventBus of VertX
-- EventBus across multiple MIcroservice Nodes (requires clustering)
-- Clustering configuration is provided and mavent-vertx plugn command to start with cluster is given
+- http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus]
+- Clustering and http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x]
+- 
 
 == Organizers
 
