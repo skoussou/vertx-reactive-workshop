@@ -36,7 +36,6 @@ public class MainVerticle extends AbstractVerticle {
 	@Override
 	public void start() {
 		startHttpServer();
-		startHomeplanProviderEventBus();
 	}
 
 	private void startHttpServer() {
@@ -60,34 +59,6 @@ public class MainVerticle extends AbstractVerticle {
 		vertx.createHttpServer().requestHandler(router::accept).listen(8080);
 
 		logger.info("Http router has started");
-	}
-
-	private void startHomeplanProviderEventBus() {
-		vertx.eventBus().<String>consumer(Constants.HOMEPLANS_EVENTS_ADDRESS, message -> {
-			replyWithHomeplan(message);
-		});
-		logger.info("Homeplans event bus ready");
-
-	}
-
-	// Methods used by event bus consumer
-
-	private void replyWithHomeplan(Message<String> message) {
-		SharedData sd = vertx.sharedData();
-		Future<HomePlan> futureHomePlan = getHomePlan(sd, message.body());
-		futureHomePlan.compose(s -> {
-			HomePlan homePlan = futureHomePlan.result();
-			if (homePlan != null) {
-				message.reply(Json.encode(Mapper.toHomePlanDTO(homePlan)));
-				logger.info("Replied to message successfully");
-			} else {
-				logger.info("Homeplan not found, replying failure");
-				message.fail(404, "Not found");
-			}
-		}, Future.future().setHandler(handler -> {
-			logger.error("Homeplan consumer error, replying failure", handler.cause());
-			message.fail(500, "Homeplan consumer error");
-		}));
 	}
 
 	// Methods used by router
