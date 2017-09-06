@@ -83,7 +83,7 @@ public class MainVerticle extends AbstractVerticle {
                 //          reply with the homeplan. Content must be mapped to DTO (Mapper.toHomePlanDTO(homePlan))
                 //          and Json formatted.
 
-			logger.info("Replied to message successfully");
+			logger.info("FIXME - NO #homeplan address REPLY - Replied to message successfully");
 			} else {
 				logger.info("Homeplan not found, replying failure");
 				message.fail(404, "Not found");
