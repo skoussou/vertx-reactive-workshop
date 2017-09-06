@@ -81,11 +81,11 @@ url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0
 
 * Create Content for verticles in *_homeplan_* maven project to complete the service
   ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyWithHomeplan(Message<String> message)_* to *_reply_* to a consumed request on *_#homeplans_* address on the bus with the identified homeplan details
-    *** To test upon saving redeployment should give you the outcome desired in the *_homeplan_* and *_sensor-generator_* console logs
+    *** To test upon saving redeployment should give you the outcome desired in the *_homeplan_* and in *_sensor-generator_* console logs you will see a new message starting _"INFO: Homeplan returned:..."_
 
 * Create Content for verticles in *_device-management_* maven project to complete the service
     ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyDevice(String key, Message<String> message)_* to *_reply_* to a consumed request on *_#device-data_* address on the bus with the identified device details
-    *** To test upon saving redeployment should give you the outcome desired in the *_device-management_* and *_sensor-generator_* console logs
+    *** To test upon saving redeployment should give you the outcome desired in the *_device-management_* and *_sensor-generator_* console logs and finally the ambiance data would have been created for the sensor location and message _"INFO: Publishing in address ambiance-data event..."_ appears
 
 ----
 open new terminal
