@@ -36,11 +36,11 @@ FOLLOWED by 15 MINUTES reviewing the solution
 ----
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-2]*/homeplan*
-mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
-mvn comiple vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
 * Read on Vert.x clustering and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
@@ -63,7 +63,7 @@ curl -H "Content-Type: application/json" -X POST -d '@kousourisA.json'  http://1
 
 kousourisA.json CONTENTS
 { "KousourisHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
------
+----
 
 * Create Content for verticles in *_device-management_* maven project to complete the service
   ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from #device-reg EventBus address and complete register Device action
