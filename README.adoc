@@ -55,9 +55,36 @@ mvn compile vertx:run
 
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
-* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.X Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
-  ** As a final step expose a "Hello World" message on a GET request to the *_/_* path of the HTTP server
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.X Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*
+  ** As a final step expose a "Hello World" message on a GET request to the *_'/'_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
+* Add new class Constants with the following content to be used later in this lab
+
+----
+     public class Constants {
+
+	// Rest
+	//public static final String ROOT_PATH = "/homeplan";
+	public static final String ROOT_PATH = "/";
+
+	public static final String ID_PARAM = "id";
+
+	// Share data
+	public static final String HOMEPLANS_MAP = "homeplans";
+
+	public static final String HOMEPLAN_IDS_MAP = "homeplan-ids";
+
+	public static final String SET_ID = "index-set-id";
+
+	// Addresses
+	public static final String DEVICE_REGISTRATION_EVENTS_ADDRESS = "device-reg";
+	
+	public static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
+	
+	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
+     }
+----
+
 
 * Add logging into the *_MainVerticle.java_* choosing the *_io.vertx.core.*;_* logging imports
    
@@ -171,33 +198,7 @@ testB.json CONTENTS
 { "SanschoHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "30"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "33"], "devices" : ["AIRCON", "bedroom-1"]}]}
 ----
       
-All of the above will require the following class
 
-
-----
-     public class Constants {
-
-	// Rest
-	//public static final String ROOT_PATH = "/homeplan";
-	public static final String ROOT_PATH = "/";
-
-	public static final String ID_PARAM = "id";
-
-	// Share data
-	public static final String HOMEPLANS_MAP = "homeplans";
-
-	public static final String HOMEPLAN_IDS_MAP = "homeplan-ids";
-
-	public static final String SET_ID = "index-set-id";
-
-	// Addresses
-	public static final String DEVICE_REGISTRATION_EVENTS_ADDRESS = "device-reg";
-	
-	public static final String HOMEPLANS_EVENTS_ADDRESS = "homeplans";
-	
-	public static final String DEVICE_DATA_EVENTS_ADDRESS = "device-data";
-     }
-----
 
 
 ====  STEP 3 Threading, Event Loop instances
