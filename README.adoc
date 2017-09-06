@@ -16,21 +16,23 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 * The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
-= LAB 2
+= LAB 3
 
 TIME ESTIMATION 30 MINUTES
 FOLLOWED by 15 MINUTES reviewing the solution
 
 == Concepts visited in this LAB
 
-* http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus
-* Clustering and http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] on clustered Vert.x intances
+* http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus (SEND/REPLY)
+* *(TBC)* REACTIVE JAVA via handlers
+* *(TBC)* REACTIVE JAVA via Futures??
+* HTTP Rest Client
 
 
 == PARTICIPANTS
 
 ==== STEP 1 - Start a clustered Vert.x application
-* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 2*
+* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 3*
 * Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 2 members
 
 ----
@@ -40,6 +42,10 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-2]/sensor-generator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
@@ -87,3 +93,32 @@ curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.
     ** Use the above test and now each device should be showing as registered in the logs
 
 
+
+
+
+
+ORGANIZERS PART
+clone/unzip "ReactiveVertX Branch - LAB 2"
+which will have solution of LAB 2
+Sensor Generator Application with all algorithms ready for sensor generation in utility methods including traversing through the list of HomePlan 
+                         location-sensors and list of DevicesStatus and with the calling of the REST homeplan in place WITH INSTRUCTIONs (To be erviewed). Will have 
+clustering in place OOB
+Device Management Application with solutoin from LAB 2
+
+PARTICIPANTS PART
+   Create Content for verticles in Sensor Generator
+        - Implement Rest Client to get HomePlan IDs (from GET /homeplan) localhost:8080 --> implementaion of getHomePlanIds
+        - send: Messages to #homeplans to retrieve Homeplan Info and handle response --> implementation of getHomePlan
+       - send: Messages to #device-data to retrieve current device status
+       WE WILL Provide algorithm to combine the 2 above call REPLIES content to create the message for #ambience-data 
+       - Call publish (implemented by US as DUMMY) logging the messages generated
+
+   Create Content for verticles in HomePlan
+    - Implement consume/reply from #homeplans
+
+   Create Content for verticles in Device Management
+    - consume/reply: Messages from #device-data on the bus, call a method 
+    - to get data from shared-data (THIS PART WE WILL PROVIDE) and PARTICIPANTS will return response to reply (SEND/REPLY pattern)
+
+Run outside OCP
+Pre-Requisites: 
