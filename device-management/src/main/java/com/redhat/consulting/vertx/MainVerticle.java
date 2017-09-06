@@ -154,7 +154,7 @@ public class MainVerticle extends AbstractVerticle {
 				logger.error(appErrorPrefix(AppErrorCode.MESSAGE_IS_EMPTY)+" Received Message on address #"+deviceDataEventsAddress+" is empty");
 				// SEND/REPLY example for compensation
 				// message.reply(json.put("message", "ERROR"));
-                                message.fail("The message provided was empty", AppErrorCode.NON_REGISTERED_DEVICE.getErrorCode());
+                                message.fail(AppErrorCode.NON_REGISTERED_DEVICE.getErrorCode(), "The message provided was empty");
 			} else {
 
 				// We will receive it as JSON string, transform it to its class equivalent
