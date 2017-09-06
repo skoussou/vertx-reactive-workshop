@@ -208,10 +208,10 @@ and prepend each HTTP response with the eventLoopID
 Json.encodePrettily(eventLoopID+...
 ----
 
-** Repeat the GET /homeplan request multiple times and see the EventLoop that services it
-** Repeat the POST & PUT /homeplan/{id} multiple times and see the EventLoop that services it
-** Do you notice a difference? 
-** Now execute the GET /homeplan/{id} and report the findings and why there is a difference in each executin
+  ** Repeat the GET /homeplan request multiple times and see the EventLoop that services it
+  ** Repeat the POST & PUT /homeplan/{id} multiple times and see the EventLoop that services it
+  ** Do you notice a difference? 
+  ** Now execute the GET /homeplan/{id} and report the findings and why there is a difference in each executin
 
 * Use the http://vertx.io/docs/vertx-core/java/#_verticles[Launcher] to manage instances via DeploymentOptions etc.
 
