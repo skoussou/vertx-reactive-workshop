@@ -25,10 +25,10 @@ FOLLOWED by 15 MINUTES explain the solution
 
 == Concepts visited in this LAB
 
-- http://vertx.io/docs/vertx-core/java/#_verticles [Verticle and instances]
-- http://vertx.io/docs/vertx-core/java/#_writing_http_servers_and_clients [HTTPServer]
-- http://vertx.io/docs/vertx-core/java/#_reactor_and_multi_reactor [EventLoop]
-- Launcher
+- http://vertx.io/docs/vertx-core/java/#_verticles[Verticle and instances]
+- http://vertx.io/docs/vertx-core/java/#_writing_http_servers_and_clients[HTTPServer]
+- http://vertx.io/docs/vertx-core/java/#_reactor_and_multi_reactor[EventLoop]
+- http://vertx.io/docs/vertx-core/java/#_verticles[Launcher]Launcher
 
 
 == Participants
