@@ -23,10 +23,10 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 == Concepts visited in this LAB
 
-* http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus (SEND/REPLY)
-* *(TBC)* REACTIVE JAVA via handlers
-* *(TBC)* REACTIVE JAVA via Futures??
-* HTTP Rest Client
+* http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus with SEND/REPLY pattern
+* We will see Vert.x Reacting via handlers
+* We will see Reacting via Futures
+* http://vertx.io/docs/vertx-web-client/java/[HTTP Rest Client]
 
 
 == PARTICIPANTS
@@ -37,25 +37,55 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/sensor-generator
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
-* (optional) Read on Vert.x http://vertx.io/docs/#clustering[clustering] and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
 
 ==== STEP 2 - Create content for the following parts of the scenario
+* Create Content for verticles in *_sensor-generator_* maven project to complete the service
+  ** Using resources at http://vertx.io/docs/vertx-web-client/java/[Web Client] Fix method *_getHomePlanIds()_* to make RESTful *GET* call to endpoint */homeplan* to retrieve the *ids* of the registred homeplans
+    *** Test the added functionality by executing the following request and checking on the *_sensort-generator_* Vert.x application for the output showing the received homeplan Ids (the same can also be inspected at the *_homeplan_* Vert.x applicatoin console which is serving the request)
+----
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
+url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
+----
+
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *getHomePlan()_* to send the given homeplan id to address *_#homeplan*
+     and expect a reply of the HomePlanDTO corresponding to this ID
+    *** To test upon saving redeployment should give you the outcome desired
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *getDeviceStatus()_* to send the given sensor id to address *_#device-data_*
+     and expect a reply of the DeviceStatusDTO corresponding to this ID
+    *** To test upon saving redeployment you should get the error since no REPLY on this addres has been implemented yet. This will be tested along the next part of the lab
+
 * Create Content for verticles in *_homeplan_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* to *_send_* Messages to *_#device-reg_* on the bus
-    *** Test by executing the following request and check the console of the *_homeplan_* Vert.x application for output showing the registration taking place. Note, you will get a "Internal Error" on the
-        console of the client call as the consuming of the message is not currently implemented
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyWithHomeplan(Message<String> message)_* to *_reply_* to a consumed request on *_#homeplans_* address on the bus with the identified homeplan details
+    *** To test upon saving redeployment should give you the outcome desired in the *_homeplan_* and *_sensor-generator_* console logs
+
+* Create Content for verticles in *_device-management_* maven project to complete the service
+    ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyDevice(String key, Message<String> message)_* to *_reply_* to a consumed request on *_#device-data_* address on the bus with the identified device details
+    *** To test upon saving redeployment should give you the outcome desired in the *_device-management_* and *_sensor-generator_* console logs
 
 ----
 open new terminal
@@ -77,48 +107,27 @@ url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan
-mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
-mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan/data
-curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
+url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_registerDevice_* and PUT the devices into a shared-map
-    ** Use the above test and now each device should be showing as registered in the logs
 
 
 
 
 
 
-ORGANIZERS PART
-clone/unzip "ReactiveVertX Branch - LAB 2"
-which will have solution of LAB 2
-Sensor Generator Application with all algorithms ready for sensor generation in utility methods including traversing through the list of HomePlan 
-                         location-sensors and list of DevicesStatus and with the calling of the REST homeplan in place WITH INSTRUCTIONs (To be erviewed). Will have 
-clustering in place OOB
-Device Management Application with solutoin from LAB 2
 
-PARTICIPANTS PART
-   Create Content for verticles in Sensor Generator
-        - Implement Rest Client to get HomePlan IDs (from GET /homeplan) localhost:8080 --> implementaion of getHomePlanIds
-        - send: Messages to #homeplans to retrieve Homeplan Info and handle response --> implementation of getHomePlan
-       - send: Messages to #device-data to retrieve current device status
-       WE WILL Provide algorithm to combine the 2 above call REPLIES content to create the message for #ambience-data 
-       - Call publish (implemented by US as DUMMY) logging the messages generated
 
-   Create Content for verticles in HomePlan
-    - Implement consume/reply from #homeplans
-
-   Create Content for verticles in Device Management
-    - consume/reply: Messages from #device-data on the bus, call a method 
-    - to get data from shared-data (THIS PART WE WILL PROVIDE) and PARTICIPANTS will return response to reply (SEND/REPLY pattern)
-
-Run outside OCP
-Pre-Requisites: 
