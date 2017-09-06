@@ -25,7 +25,7 @@ FOLLOWED by 15 MINUTES explain the solution
 
 == Concepts visited in this LAB
 
-- Verticle and instances
+- http://vertx.io/docs/vertx-core/java/#_verticles [Verticle and instances]
 - HTTPServer
 - EventLoop
 - Launcher
@@ -36,7 +36,7 @@ FOLLOWED by 15 MINUTES explain the solution
 
 [source,perl]
 
-==== STEP 1 - Create a Vert.X maven project with the following command initiating it with a single Vert.X Verticle using a Vert.X maven archetype
+==== STEP 1 - Create a Vert.x maven project with the following command initiating it with a single Vert.x Verticle using a Vert.x maven archetype
 
 [source,perl]
 ----
@@ -44,7 +44,7 @@ mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consul
 ----
 
     - Inspect *_MainVerticle.java_* and the AbstractVerticle to identify getting access to the Vertx instance
-    - Start the Vert.X eventloop locally with the following command and check the logs to ensure the Verticle has been successfully started
+    - Start the Vert.x eventloop locally with the following command and check the logs to ensure the Verticle has been successfully started
 
 [source,perl]
 ----
@@ -52,10 +52,11 @@ mvn compile vertx:run
 ----
 
     - Make a change on *_MainVerticle.java_* and press 'Save'. You will see in the command line the *_vertx-maven-plugin_* fabric8 plugin redeploying the verticle
+    - Review the possible configurations https://vmp.fabric8.io/#common:configurations and run configurations https://vmp.fabric8.io/#common:run-configurations via the *_vertx-maven-plugin_* 
 
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
-* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.X Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*
   ** As a final step expose a "Hello World" message on a GET request to the *_'/'_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
 * Add new class Constants with the following content to be used later in this lab
@@ -100,7 +101,7 @@ private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 private Map<String, String> homeplans= new HashMap<String, String>();
 ---- 
 
-* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.X Web]  and implement the following REST endpoints on the HTTP Server created previously
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web]  and implement the following REST endpoints on the HTTP Server created previously
       ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet) to retrieve all registerd homeplan IDs
 
 [source,perl]
@@ -203,11 +204,22 @@ testB.json CONTENTS
 
 ====  STEP 3 Threading, Event Loop instances
 
-*TO BE COMPLETED*
+* Deploy multiple Verticles by way of command line http://vertx.io/docs/vertx-core/java/#_run_verticles[configuration] *_-Dvertx.runArgs="--instances=2"_* 
+* Once the Vert.x application is running add in each of the HTTP helper methods
 
-* as an extra show  DURING last 15 minutes 
-* how to start multiple Verticle Instances and what it means from HTTP *(Launcher manages that ... ned to find how in pom.xml). Also show that in starting anothe Verticle)*
-* Request handling (Event Loop, Verticle Instance)
+----
+String eventLoopID = "[EVENT LOOP ID - "+this.toString()+"]";
+
+and prepend each HTTP response with the eventLoopID
+
+Json.encodePrettily(eventLoopID+...
+----
+
+* Repeat the GET /homeplan request multiple times and see the EventLoop that services it
+* Repeat the POST & PUT /homeplan/{id} multiple times and see the EventLoop that services it
+* Do you notice a difference? 
+* Now execute the GET /homeplan/{id} and report the findings and why there is a difference in each executin
+
 
 
 
