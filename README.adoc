@@ -23,7 +23,7 @@ TIME ESTIMATION 30 MINUTES
 FOLLOWED by 15 MINUTES explain the solution
 
 
-== Concepts in this LAB
+== Concepts visited in this LAB
 
 - Verticle and instances
 - HTTPServer
@@ -55,7 +55,7 @@ mvn compile vertx:run
 
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
-* *(TBD: Look AT LINK)* and create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.X Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the MainVerticle.java
   ** As a final step expose a "Hello World" message on a GET request to the *_/_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
 
@@ -73,7 +73,7 @@ private final Logger logger = LoggerFactory.getLogger(MainVerticle.class);
 private Map<String, String> homeplans= new HashMap<String, String>();
 ---- 
 
-* *(TBD: Look AT LINK)* and implement the following REST endpoints on the HTTP Server created previously
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.X Web]  and implement the following REST endpoints on the HTTP Server created previously
       ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet) to retrieve all registerd homeplan IDs
 
 [source,perl]
