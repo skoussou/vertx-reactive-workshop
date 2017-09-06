@@ -302,8 +302,10 @@ public class MainVerticle extends AbstractVerticle {
 		logger.info(Json.encodePrettily(message));
 
 
-		
-                // FIXME - Add sending to EVENT BUS address Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS the devices to be registered
+		// FIXME - Get the Vert.x EventBus and provide and send the above constructed message to 
+                //         EVENT BUS address Constants.DEVICE_REGISTRATION_EVENTS_ADDRESS for the devices to be registered
+
+
                 future.complete("Device registration sent");
 
 		return future;
