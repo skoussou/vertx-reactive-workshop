@@ -43,7 +43,7 @@ cd [REPOSITORY CLONED DIR - Branch LAB-2]*/device-management*
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
-* Read on Vert.x clustering and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
+* (optional) Read on Vert.x http://vertx.io/docs/#clustering[clustering] and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
 
 ==== STEP 2 - Create content for the following parts of the scenario
 * Create Content for verticles in *_homeplan_* maven project to complete the service
@@ -66,7 +66,7 @@ kousourisA.json CONTENTS
 ----
 
 * Create Content for verticles in *_device-management_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from #device-reg EventBus address and complete register Device action
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from *_#device-reg_* EventBus address and complete register Device action
     *** Test by executing the following request and check the console of the device-management Verticle for output *_Handler for adding Device ["DEVICE CONTENT"] is missing. You need to complete it_*
 
 ----
@@ -84,17 +84,7 @@ kousourisA.json CONTENTS
 { "KousourisHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
 ----
 
-  ** Using resources at ttp://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_registerDevice_* and PUT the devices into a shared-map
+  ** Using resources at http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_registerDevice_* and PUT the devices into a shared-map
     ** Use the above test and now each device should be showing as registered in the logs
 
-
-
-
-
-
-= LAB 3
-
-= LAB 4
-
-= LAB 5
 
