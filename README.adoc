@@ -311,7 +311,7 @@ url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0
 
 
 
-        **** Start an additional homeplan-regulator Verticle with  ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
+        **** Start an additional homeplan-regulator Vert.x node  What happens?
 
 
 
