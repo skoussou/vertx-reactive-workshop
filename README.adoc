@@ -16,6 +16,14 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 * The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
+== Target
+
+* AUTONOMOUS : CHECK
+* ASYNCHRONOUS: CHECK
+* ELASTIC: CHECK
+* RESILIENT: CHECK
+
+
 = LAB 5
 
 TIME ESTIMATION 30 MINUTES
@@ -23,97 +31,112 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 == Concepts visited in this LAB
 
-* fabric8-maven-plugin
-* Build & Deploy on OCP (deployment.yaml)
-* Clustering Bridge on Kubernetes
-* Vert.x service discovery on OCP (KubernetesBridge)
+* https://maven.fabric8.io/[fabric8-maven-plugin]
+* Build & Deploy on Openshift
+* http://vertx.io/docs/vertx-service-discovery-bridge-kubernetes/java/[Vert.x service discovery on OCP (KubernetesBridge)]
+* Vert.x Elasticity and Resillience
 
 
   
-ORGANIZERS PART
+== ORGANIZERS PART
 clone/unzip "ReactiveVertX Branch - LAB 4"
 ALL Projects now should be OCP Ready (fabric8-maven-plugin etc.)  APART from Homeplan Regulator
-
-AUTONOMOUS : CHECK
-ASYNCHRONOUS: CHECK
-ELASTIC: NOT
-RESILIENT: NOT
-
-PARTICIPANTS PART
-Walk them through (descriptive) settting up Homeplan Regulator MAVEN project for OCP deployment with
- - fabric8-maven-
-use fabric8 plugin (show them something??)
-  - build (how and why??)
-  - deploy (show them if you want custom deploymentConfig)
-
-clustering config in our projects (TBD) maybe dependencies and cluster manager configurationa and maybe separating groups 
-
-Scale components HomePlan Regulator using OC Commands (eg. Sensor Generator messages consumed by multiple HomePlan Regulaotrs or ONLY one??)
-
-TESTS:
-    
 
 
 
 == PARTICIPANTS
 
-==== STEP 1 - Start a clustered Vert.x application
+==== STEP 1 - Start local openshift or connect to 'remote Openshift'
+    * *Option 1:* Start local openshift with *_'oc tools'_* using the following command (all commands as root or sudo user)
+         
+----
+oc cluster up
+----
+    * Create project
+
+----
+oc new-project workshop
+----
+   
+    * Login into that project so f8 plugin will be able to use this user
+
+----
+oc login -u developer -p developer (NOTE*** those are default user/pass, put yours.. )
+----
+
+    * We are going to use kubernetes discovery for clustering Vert.x node instances and for that we will require some privileges in the service account used when running the container (default sa in our case):  
+----
+oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -n $(oc project -q)
+----
+
+    * *Option 2:* Connect to remote OCP cluster
+
+----
+oc login -u YOURNAME -P YOURPASSWORD -h ????
+----
+
+
+
+==== STEP 2 - Prepare maven projects for Openshift
 * clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 4*
-* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 4 members
+* Add fabric8 plugin in project by running this maven command (do so only for the *_homeplan_* maven project the others are already prepared) 
 
 ----
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan-regulator
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+mvn io.fabric8:fabric8-maven-plugin:3.5.25:setup
 ----
 
-
-==== STEP 2 - Create content for the following parts of the scenario
-
-* Create Content for verticles in *_sensor-generator_* maven project to complete the service
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_sendAmbianceData(DeviceStatusDTO deviceStatus, HomePlanDTO homePlan)_* to publish the generated ambiance data of a location in the house on EventBus address *_#ambiance-data_*
-    *** It will be tested with the following changes
-
-* Create Content for verticles in *_homeplan-regulator_* maven project to complete the service
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_startHomeplanRegulatorEventBusProvider()_* to consume messages published on *_#ambiance-data_* and extract the sensor reading
-     *** As soon as this is completed and saved the redeployment will result on an error to appear at the console log for *_homeplan-regulator_*
+* Add libraries in pom.xml (do so only for the *_homeplan_* maven project the others are already prepared) 
 
 ----
-SEVERE: 401: HOMEPLAN_REGULATOR_FAIL_APPLY_HOMEPLANHomeplan Regulation Error
-[INFO] io.vertx.core.impl.NoStackTraceThrowable: FIXME - Missing solution to send the HomePlan Regulator decision on device [SENSOR-LOCATION-DEVICE-ID]
+	   <dependency>
+	     <groupId>io.vertx</groupId>
+	     <artifactId>vertx-service-discovery-bridge-kubernetes</artifactId>
+	   </dependency>
+            <!-- required by  vertx-service-discovery-bridge-kubernetes -->
+	   <dependency>
+	     <groupId>org.slf4j</groupId>
+	     <artifactId>slf4j-api</artifactId>
+	     <version>1.7.21</version>
+	   </dependency>
 ----
 
-   ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API]  Fix method *_sendRegulatoryMsg_* to generate a message  which can be delivered to *_#device-action_* EventBus address to signify different actions on a device INCREASING/DECREASING/TURNOFF. 
+* Add f8 property in pom.xml (between <properties>.....</properties>  (do so only for the *_homeplan_* maven project the others are already prepared)
 
 ----
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
-mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
-url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
+    <!-- F8 configuration -->
+     <fabric8.generator.from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</fabric8.generator.from>
 ----
 
-     ====== TESTS
-        **** Test 1: Use the tests above and follow logs to see that the temperature increases/decreases depending on PLAN and sensor data. See an indicative log below and notice the homeplan 
+* Create *_src/main/fabric8_* folder in project and add *_deployment.yml_* file from ./openshift  (do so only for the *_homeplan_* maven project the others are already prepared)
+* Create package called *_openshift under_* *_src/main/resources_* and add *_cluster-config.xmll_* file from ./openshift  (do so only for the *_homeplan_* maven project the others are already prepared)  
+* Package microservice and deploy using f8 plugin (Note: in case of local Openshift cluster and if internet connection is slow pulling via docker command the image first into your local registry migth help for this step not to fail). If you need at any point to remove *_workshop_* applications use ./scripts/purge_apps.sh
+
+----
+mvn package fabric8:deploy -Dfabric8.mode=openshift
+----
+
+   ** *TBD* build (how and why??)
+   ** *TBD* deploy (show them if you want custom deploymentConfig)
+* REALLY NEEDED any more if I use JAVA_ARGS instead?
+  DeploymentConfig has not been properly set... f8 issue? Add this env variable to dc:
+  JAVA_OPTIONS => -Dvertx.cacheDirBase=/tmp -Dvertx.hazelcast.config=classpath:openshift/cluster-config.xml -Djava.net.preferIPv4Stack=true
+   ** Repeat this step for all for Microservices to generate a POD for each in the Openshift environment
+* Test 
+   ** *_oc get -w pods_* and note the POD IDs of the PODS which are running the microservices
+   ** *_oc logs -f POD_ID_* for each POD and check that the cluster has been successfully created
+* Run the following test
+
+----
+curl -d "@test3.json" -X POST http://homeplan-workshop.192.168.1.4.xip.io/homeplan/test3
+----
+
+  ** There is an error in *_sensor-generator_* because discovery in OCP is not based on HOST_NAME any longer but on service name (remember all PODs are in the same namespace/project 'workshop')
+  ** Fix the error by implementing Openshift service discover of the *_homeplan_* service via Kubernetes. https://github.com/vert-x3/vertx-examples/blob/master/openshift3-examples/service-discovery-application/http-frontend/src/main/java/io/vertx/examples/openshift/MyHttpVerticle.java[Here is a good example]
+
+
+STEP 3 - Scale Vert.x instances (Elasticity & Resillience
+* Scale HomePlan POD (Loadbalancing)
+* Scale HomePlan Regulator using OC Commands (eg. Sensor Generator messages consumed by multiple HomePlan Regulaotrs or ONLY one??)
+
+
+
