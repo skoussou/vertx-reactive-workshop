@@ -118,7 +118,9 @@ public class MainVerticle extends AbstractVerticle {
                                         //         inspiration and use applyTemperatureHomePlan(..) for the action decision                                        
 					
 
-					futureHPReguMsg.complete("HomePlan Regulation applied");
+					futureHPReguMsg.fail("FIXME - Missing solution to send the HomePlan Regulator decision on device "+ambianceData.getHousePlanId()+"-"+sl.getId());
+					// Uncomment with changes removing the fail
+					//futureHPReguMsg.complete("HomePlan Regulation applied");
 				}
 			}
 		}
