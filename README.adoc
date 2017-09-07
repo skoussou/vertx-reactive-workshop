@@ -16,24 +16,27 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 * The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
-= LAB 3
+= LAB 4
 
 TIME ESTIMATION 30 MINUTES
 FOLLOWED by 15 MINUTES reviewing the solution
 
 == Concepts visited in this LAB
 
-* http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus with SEND/REPLY pattern
-* Vert.x Reacting via handlers
-* Vert.x Reacting via Futures
-* http://vertx.io/docs/vertx-web-client/java/[HTTP Rest Client]
+* http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus with publish pattern
+* Starting multiple Verticles consuming the publish message and see what outcome of consuming is
+* Use Vert.x http://vertx.io/docs/#reactive[JavaRX API]
+* Observable ??
+
+
+
 
 
 == PARTICIPANTS
 
 ==== STEP 1 - Start a clustered Vert.x application
-* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 3*
-* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 3 members
+* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 4*
+* Run the following command to initiate a clustered Vert.X application and you should see the relevant message to indicate clustering has taken place with 4 members
 
 ----
 open new terminal
@@ -47,19 +50,28 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan-regulator
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
 
 ==== STEP 2 - Create content for the following parts of the scenario
+
 * Create Content for verticles in *_sensor-generator_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-web-client/java/[Web Client] Fix method *_getHomePlanIds()_* to make RESTful *GET* call to endpoint */homeplan* to retrieve the *ids* of the registred homeplans
-    *** Test the added functionality by executing the request below and checking on the *_sensor-generator_* Vert.x application for the output showing the received homeplan Ids and that the message has been changed _"INFO: FIXME - Getting all homeplans ids"_ for another _"INFO: FIXME - Sending event to address homeplans to get homeplan details for id test3"_ (the same can also be inspected at the *_homeplan_* Vert.x applicatoin console which is serving the request)
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *_getHomePlan()_* to send the given homeplan id to address *_#homeplan_*
-     and expect a reply of the HomePlanDTO corresponding to this ID
-    *** To test upon saving redeployment you should see in the *_homepln_* Vert.x application console log the following message _"INFO FIXME - NO #homeplan address REPLY - Replied to message successfully"_. This will disappear further down in the lab when we implement _replyWithHomeplan(Message<String> message)_*
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#_the_theory around SEND/REPLY pattern Fix method *_getDeviceStatus()_* to send the given sensor id to address *_#device-data_*
-     and expect a reply of the DeviceStatusDTO corresponding to this ID
-    *** To test upon saving redeployment you should get the error since no REPLY on this addres has been implemented yet. This will be tested along the next part of the lab
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_sendAmbianceData(DeviceStatusDTO deviceStatus, HomePlanDTO homePlan)_* to publish the generated ambiance data of a location in the house on EventBus address *_#ambiance-data_*
+    *** Test the ???
+
+* Create Content for verticles in *_homeplan-regulator_* maven project to complete the service
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_startHomeplanRegulatorEventBusProvider()_* to consume messages published on *_#ambience-data_* and extract the sensor reading
+   ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API]  Fix method *_sendRegulatoryMsg_* to generate a message  which can be delivered to *_#device-action_* EventBus address to signify different actions on a device INCREASING/DECREASING/TURNOFF. 
+     *** TESTS
+        **** Use the tests below and follow logs to see that the temperature increases/decreases depending on PLAN and sensor data
+        **** Ensure device is turned-off when homeplan temperature in that sensorLocation is reached
+        **** Change homeplan via a modification of test3.json and resubmit via PUT Rest request on the same endpoint
+        **** Start homeplan-regulator Verticle with --instances=2 parameter ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
+        **** Start an additional homeplan-regulator Verticle with  ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
 ----
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
@@ -78,34 +90,7 @@ cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
 url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
+==== STEP 3 - Modify Content to utilize Vert.x JavaRX API
 
-* Create Content for verticles in *_homeplan_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyWithHomeplan(Message<String> message)_* to *_reply_* to a consumed request on *_#homeplans_* address on the bus with the identified homeplan details
-    *** To test upon saving redeployment should give you the outcome desired in the *_homeplan_* and in *_sensor-generator_* console logs you will see a new message starting _"INFO: Homeplan returned:..."_
-
-* Create Content for verticles in *_device-management_* maven project to complete the service
-    ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_replyDevice(String key, Message<String> message)_* to *_reply_* to a consumed request on *_#device-data_* address on the bus with the identified device details
-    *** To test upon saving redeployment should give you the outcome desired in the *_device-management_* and *_sensor-generator_* console logs and finally the ambiance data would have been created for the sensor location and message _"INFO: Publishing in address ambiance-data event..."_ appears
-
-----
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan
-mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
-mvn compile vertx:run  -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
-
-open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan/data
-url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
-----
-
-
-
-
-
-
-
-
+*TBD*
 
