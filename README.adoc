@@ -134,7 +134,7 @@ curl -d "@test3.json" -X POST http://homeplan-workshop.192.168.1.4.xip.io/homepl
   ** Fix the error by implementing Openshift service discover of the *_homeplan_* service via Kubernetes. https://github.com/vert-x3/vertx-examples/blob/master/openshift3-examples/service-discovery-application/http-frontend/src/main/java/io/vertx/examples/openshift/MyHttpVerticle.java[Here is a good example]
 
 
-STEP 3 - Scale Vert.x instances (Elasticity & Resillience
+==== STEP 3 - Scale Vert.x instances (Elasticity & Resillience
 * Scale HomePlan POD (Loadbalancing)
 * Scale HomePlan Regulator using OC Commands (eg. Sensor Generator messages consumed by multiple HomePlan Regulaotrs or ONLY one??)
 

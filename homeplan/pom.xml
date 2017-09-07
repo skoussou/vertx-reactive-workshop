@@ -77,12 +77,6 @@
 	</dependencies>
 
 
-	<profiles>
-		<profile>
-			<id>local</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<build>
 				<pluginManagement>
 					<plugins>
@@ -117,11 +111,6 @@
 					</plugin>
 				</plugins>
 			</build>
-
-		</profile>
-
-	</profiles>
-
 
 
 </project>
