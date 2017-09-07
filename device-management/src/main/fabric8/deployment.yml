@@ -9,6 +9,7 @@ spec:
                 fieldRef:
                   apiVersion: v1
                   fieldPath: metadata.namespace
+            - name: JAVA_OPTIONS
+              value: '-Dvertx.cacheDirBase=/tmp -Dvertx.hazelcast.config=classpath:openshift/cluster-config.xml -Djava.net.preferIPv4Stack=true'
             - name: JAVA_ARGS
-              value: '-Dvertx.cacheDirBase=/tmp -Dvertx.jgroups.config=default-configs/default-jgroups-kubernetes.xml -Djava.net.preferIPv4Stack=true -cluster'
-
+              value: '-cluster'
