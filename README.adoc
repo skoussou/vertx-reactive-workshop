@@ -78,7 +78,7 @@ oc login -u YOURNAME -P YOURPASSWORD -h ????
 
 
 ==== STEP 2 - Prepare maven projects for Openshift
-* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 4*
+* clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 5*
 * Add fabric8 plugin in project by running this maven command (do so only for the *_homeplan_* maven project the others are already prepared) 
 
 ----

@@ -16,8 +16,6 @@
 		<vertx.verticle>com.redhat.consulting.vertx.MainVerticle</vertx.verticle>
 		<!-- also the default -->
 		<vertx.launcher>io.vertx.core.Launcher</vertx.launcher>
-		<!-- F8 configuration -->
-		<fabric8.generator.from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</fabric8.generator.from>
 	</properties>
 
 	<dependencyManagement>
@@ -47,22 +45,12 @@
 			<artifactId>vertx-hazelcast</artifactId>
 		</dependency>
 
-		<dependency>
-			<groupId>io.vertx</groupId>
-			<artifactId>vertx-service-discovery-bridge-kubernetes</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>io.vertx</groupId>
 			<artifactId>vertx-service-discovery</artifactId>
 		</dependency>
 
-		<!-- required by vertx-service-discovery-bridge-kubernetes -->
-		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
-			<version>1.7.21</version>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
