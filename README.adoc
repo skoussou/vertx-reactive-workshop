@@ -107,9 +107,9 @@ mvn io.fabric8:fabric8-maven-plugin:3.5.25:setup
      <fabric8.generator.from>registry.access.redhat.com/redhat-openjdk-18/openjdk18-openshift</fabric8.generator.from>
 ----
 
-* Create *_src/main/fabric8_* folder in project and add *_deployment.yml_* file from link="/openshift"  (do so only for the *_homeplan_* maven project the others are already prepared)
-* Create package called *_openshift under_* *_src/main/resources_* and add *_cluster-config.xmll_* file from link="/openshift"  (do so only for the *_homeplan_* maven project the others are already prepared)  
-* Package microservice and deploy using f8 plugin (Note: in case of local Openshift cluster and if internet connection is slow pulling via docker command the image first into your local registry migth help for this step not to fail). If you need at any point to remove *_workshop_* applications use link="scripts/purge_apps.sh"
+* Create *_src/main/fabric8_* folder in project and add *_deployment.yml_* file from link:/openshift  (do so only for the *_homeplan_* maven project the others are already prepared)
+* Create package called *_openshift under_* *_src/main/resources_* and add *_cluster-config.xmll_* file from link:/openshift  (do so only for the *_homeplan_* maven project the others are already prepared)  
+* Package microservice and deploy using f8 plugin (Note: in case of local Openshift cluster and if internet connection is slow pulling via docker command the image first into your local registry migth help for this step not to fail). If you need at any point to remove *_workshop_* applications use link:scripts/purge_apps.sh
 
 ----
 mvn package fabric8:deploy -Dfabric8.mode=openshift
