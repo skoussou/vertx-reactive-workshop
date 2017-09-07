@@ -73,12 +73,7 @@ SEVERE: 401: HOMEPLAN_REGULATOR_FAIL_APPLY_HOMEPLANHomeplan Regulation Error
 ----
 
    ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API]  Fix method *_sendRegulatoryMsg_* to generate a message  which can be delivered to *_#device-action_* EventBus address to signify different actions on a device INCREASING/DECREASING/TURNOFF. 
-     *** TESTS
-        **** Use the tests below and follow logs to see that the temperature increases/decreases depending on PLAN and sensor data
-        **** Ensure device is turned-off when homeplan temperature in that sensorLocation is reached
-        **** Change homeplan via a modification of test3.json and resubmit via PUT Rest request on the same endpoint
-        **** Start homeplan-regulator Verticle with --instances=2 parameter ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
-        **** Start an additional homeplan-regulator Verticle with  ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
+
 ----
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
@@ -96,6 +91,231 @@ open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
 url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
+
+     ====== TESTS
+        **** Test 1: Use the tests above and follow logs to see that the temperature increases/decreases depending on PLAN and sensor data. See an indicative log below and notice the homeplan 
+                     desired temperature *22* and the ambiance *35* originally changing to *34*, *33* as the device action has been set to *DECREASING* on device *_test3-kitchen-1_* and the
+                     sensor generator senses this changing the temperature in the room every 30 secs by 1 degree until homeplan and ambiance match. Watch also device-management logs which apply these actions.
+
+----
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop com.redhat.consulting.vertx.MainVerticle@5e07ca61) 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 12:50:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Begin Regulating Location test3-SensorLocation [id=kitchen-1, type=kitchen, temperature=35]
+[INFO] Sep 07, 2017 12:50:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Finding match between ambiance data [test3-kitchen-1] and sensor location [test3-kitchen-1]
+[INFO] Sep 07, 2017 12:50:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: AMBIANCE{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 35
+[INFO] }
+[INFO] PLAN{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 22
+[INFO] }
+[INFO] Sep 07, 2017 12:50:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applying Temperature HomePlan for PLAN TEMP [22 Location TEMP [35] 
+[INFO] Sep 07, 2017 12:50:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Sending Regulating action <DECREASING> on Device: {
+[INFO]   "housePlanId" : "test3",
+[INFO]   "id" : "kitchen-1"
+[INFO] }
+[INFO] Sep 07, 2017 12:50:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applied Successfully HomePlan temperature regulation for location test3-kitchen-1
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop com.redhat.consulting.vertx.MainVerticle@5e07ca61) 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Begin Regulating Location test3-SensorLocation [id=kitchen-1, type=kitchen, temperature=34]
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Finding match between ambiance data [test3-kitchen-1] and sensor location [test3-kitchen-1]
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: AMBIANCE{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 34
+[INFO] }
+[INFO] PLAN{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 22
+[INFO] }
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applying Temperature HomePlan for PLAN TEMP [22 Location TEMP [34] 
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Sending Regulating action <DECREASING> on Device: {
+[INFO]   "housePlanId" : "test3",
+[INFO]   "id" : "kitchen-1"
+[INFO] }
+[INFO] Sep 07, 2017 12:50:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applied Successfully HomePlan temperature regulation for location test3-kitchen-1
+[INFO] Sep 07, 2017 12:50:57 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+
+[... HERE WE HAVE REMOVED 30 secs of logging ..]
+
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop com.redhat.consulting.vertx.MainVerticle@5e07ca61) 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 12:51:27 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Begin Regulating Location test3-SensorLocation [id=kitchen-1, type=kitchen, temperature=33]
+[INFO] Sep 07, 2017 12:51:27 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Finding match between ambiance data [test3-kitchen-1] and sensor location [test3-kitchen-1]
+[INFO] Sep 07, 2017 12:51:27 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: AMBIANCE{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 33
+[INFO] }
+[INFO] PLAN{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 22
+[INFO] }
+[INFO] Sep 07, 2017 12:51:27 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applying Temperature HomePlan for PLAN TEMP [22 Location TEMP [33] 
+[INFO] Sep 07, 2017 12:51:27 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Sending Regulating action <DECREASING> on Device: {
+[INFO]   "housePlanId" : "test3",
+[INFO]   "id" : "kitchen-1"
+[INFO] }
+[INFO] Sep 07, 2017 12:51:27 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applied Successfully HomePlan temperature regulation for location test3-kitchen-1
+----
+
+        **** Ensure device is turned-off when homeplan temperature in that sensorLocation is reached and see it in the log where now the action on the device will be *TURNOFF* (see also device-management logs which apply this action).
+
+----
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop com.redhat.consulting.vertx.MainVerticle@5e07ca61) 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 12:58:17 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Begin Regulating Location test3-SensorLocation [id=kitchen-1, type=kitchen, temperature=22]
+[INFO] Sep 07, 2017 12:58:17 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Finding match between ambiance data [test3-kitchen-1] and sensor location [test3-kitchen-1]
+[INFO] Sep 07, 2017 12:58:17 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: AMBIANCE{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 22
+[INFO] }
+[INFO] PLAN{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 22
+[INFO] }
+[INFO] Sep 07, 2017 12:58:17 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applying Temperature HomePlan for PLAN TEMP [22 Location TEMP [22] 
+[INFO] Sep 07, 2017 12:58:17 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Sending Regulating action <TURNOFF> on Device: {
+[INFO]   "housePlanId" : "test3",
+[INFO]   "id" : "kitchen-1"
+[INFO] }
+[INFO] Sep 07, 2017 12:58:17 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applied Successfully HomePlan temperature regulation for location test3-kitchen-1
+
+----
+
+        **** Change homeplan via a modification of test3.json and resubmit via PUT Rest request on the same endpoint. You should see the homeplan changing and the sensor-generator reacting in flight
+             with new ambiance data whilst also the homeplan-regulator also changes behavior on the device actions
+        **** Start homeplan-regulator Verticle with --instances=2 parameter ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
+
+----
+[INFO] Members [4] {
+[INFO] 	Member [192.168.122.1]:5701
+[INFO] 	Member [192.168.122.1]:5702
+[INFO] 	Member [192.168.122.1]:5704
+[INFO] 	Member [192.168.122.1]:5703 this
+[INFO] }
+[INFO] 
+[INFO] Sep 07, 2017 1:04:37 PM com.hazelcast.core.LifecycleService
+[INFO] INFO: [192.168.122.1]:5703 [dev] [3.6.3] Address[192.168.122.1]:5703 is STARTED
+[INFO] Sep 07, 2017 1:04:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR - MainVerticle 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 1:04:38 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR - MainVerticle 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 1:04:38 PM io.vertx.core.impl.launcher.commands.VertxIsolatedDeployer
+[INFO] INFO: Succeeded in deploying verticle
+[INFO] Sep 07, 2017 1:04:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop com.redhat.consulting.vertx.MainVerticle@41674304) 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 1:04:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: 
+[INFO] ----------------------------------------------------------------------------
+[INFO]  HOMEPLAN REGULATOR EVENT BUS ready (Vert.X EventLoop com.redhat.consulting.vertx.MainVerticle@19014d32) 
+[INFO] ----------------------------------------------------------------------------
+[INFO] Sep 07, 2017 1:04:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Begin Regulating Location test3-SensorLocation [id=kitchen-1, type=kitchen, temperature=21]
+[INFO] Sep 07, 2017 1:04:47 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Begin Regulating Location test3-SensorLocation [id=kitchen-1, type=kitchen, temperature=21]
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Finding match between ambiance data [test3-kitchen-1] and sensor location [test3-kitchen-1]
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: AMBIANCE{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 21
+[INFO] }
+[INFO] PLAN{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 38
+[INFO] }
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applying Temperature HomePlan for PLAN TEMP [38 Location TEMP [21] 
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Sending Regulating action <INCREASING> on Device: {
+[INFO]   "housePlanId" : "test3",
+[INFO]   "id" : "kitchen-1"
+[INFO] }
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Finding match between ambiance data [test3-kitchen-1] and sensor location [test3-kitchen-1]
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: AMBIANCE{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 21
+[INFO] }
+[INFO] PLAN{
+[INFO]   "id" : "kitchen-1",
+[INFO]   "type" : "kitchen",
+[INFO]   "temperature" : 38
+[INFO] }
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applying Temperature HomePlan for PLAN TEMP [38 Location TEMP [21] 
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Sending Regulating action <INCREASING> on Device: {
+[INFO]   "housePlanId" : "test3",
+[INFO]   "id" : "kitchen-1"
+[INFO] }
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applied Successfully HomePlan temperature regulation for location test3-kitchen-1
+[INFO] Sep 07, 2017 1:04:48 PM com.redhat.consulting.vertx.MainVerticle
+[INFO] INFO: Applied Successfully HomePlan temperature regulation for location test3-kitchen-1
+----
+
+
+
+        **** Start an additional homeplan-regulator Verticle with  ---> What happens? does homeplan-regulator Verticle instances both consume it? (It shouldn't be, it should be one)
+
+
+
+
 
 ==== STEP 3 - Modify Content to utilize Vert.x JavaRX API
 
