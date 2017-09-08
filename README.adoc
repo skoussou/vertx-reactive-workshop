@@ -32,6 +32,8 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 == PARTICIPANTS
 
+In this lab we will extend the capabilities to add a new maven project (*_device-management_*) which will handle requests over the Vert.x EventBus to register the devices. You will send & consume messages sent to an EventBus address for the registration purpose and also save the devices into a clustered map maintained by Vert.x clustered nodes.
+
 image:images/LAB-2.png["Lab Scenario Intentions",height=712] 
 
 ==== STEP 1 - Start a clustered Vert.x application
