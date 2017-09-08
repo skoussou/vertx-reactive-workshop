@@ -28,12 +28,14 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 * http://vertx.io/docs/vertx-core/java/#event_bus[The EventBus] sending/consuming messages over a clustered bus with publish pattern
 * Starting multiple Verticles consuming the publish message and see what outcome of consuming is
-* Use Vert.x http://vertx.io/docs/#reactive[JavaRX API]
-* Observable ??
+* *TBC* Use Vert.x http://vertx.io/docs/#reactive[JavaRX API]
+* *TBC*Observable ??
 
 
 
 == PARTICIPANTS
+
+In this lab we finalise the scenario by enhancing sensor-generator to _publish_ ambiance data of a room (sensorLocation) into the EventBus and introduce a new Vert.x Microservice the *_homeplan-regulatorr_*. The new microservice will listen in for ambiance data and send a request/reply from *_homeplan_* for the homeplan the ambiance data belong to combining the knowledge to send a _device action_ on the EventBus. The *_device-management_* will be enhanced to consume _device action_ messages and published _ambiance data_ for the purpose of updating a device with the action to take and the current room temperature.
 
 image:images/LAB-4.png["Lab Scenario Intentions",height=712] 
 
