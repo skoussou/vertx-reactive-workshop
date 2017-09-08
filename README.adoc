@@ -48,11 +48,11 @@ cd [REPOSITORY CLONED DIR - Branch LAB-2]/device-management
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
-* (optional) Read on Vert.x http://vertx.io/docs/#clustering[clustering] and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
+* (optional) Read on Vert.x link:http://vertx.io/docs/#clustering[clustering] and note we have used http://vertx.io/docs/vertx-hazelcast/java/[Hazlecast clustering configuration] therefore check the pom.xml and resources/cluster-config.xml
 
 ==== STEP 2 - Create content for the following parts of the scenario
 * Create Content for verticles in *_homeplan_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* to *_send_* Messages to *_#device-reg_* on the bus
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* to *_send_* Messages to *_#device-reg_* on the bus
     *** Test by executing the following request and check the console of the *_homeplan_* Vert.x application for output showing the registration taking place. Note, you will get a "Internal Error" on the
         console of the client call as the consuming of the message is not currently implemented
 
@@ -71,7 +71,7 @@ url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0
 ----
 
 * Create Content for verticles in *_device-management_* maven project to complete the service
-  ** Using resources at http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from *_#device-reg_* EventBus address and complete register Device action
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from *_#device-reg_* EventBus address and complete register Device action
     *** Test by executing the following request and check the console of the device-management Verticle for output *_Handler for adding Device ["DEVICE CONTENT"] is missing. You need to complete it_*
 
 ----
