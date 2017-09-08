@@ -40,13 +40,6 @@ FOLLOWED by 15 MINUTES reviewing the solution
 * Vert.x Elasticity and Resillience
 
 
-  
-== ORGANIZERS PART
-clone/unzip "ReactiveVertX Branch - LAB 4"
-ALL Projects now should be OCP Ready (fabric8-maven-plugin etc.)  APART from Homeplan Regulator
-
-
-
 == PARTICIPANTS
 
 ==== STEP 1 - Start local openshift or connect to 'remote Openshift'
