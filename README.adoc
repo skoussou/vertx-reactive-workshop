@@ -1,6 +1,6 @@
 = SCENARIO
 
-image:images/design.png["VertX Application",height=356] 
+image:images/Visual-Scenario.png["VertX Application Scenario",height=712] 
 
 == The Micro-Homeplan Application
 
@@ -16,6 +16,8 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 * The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
+== Design
+image:images/design.png["VertX Application",height=356
 
 = LAB 1
 
@@ -33,6 +35,7 @@ FOLLOWED by 15 MINUTES explain the solution
 
 == Participants
 
+image:images/LAB-1.png["Lab Scenario Intentions",height=712] 
 
 [source,perl]
 
