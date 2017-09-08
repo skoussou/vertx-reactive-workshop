@@ -30,7 +30,7 @@ FOLLOWED by 15 MINUTES to review the solution
 - http://vertx.io/docs/vertx-core/java/#_verticles[Verticle and instances]
 - http://vertx.io/docs/vertx-core/java/#_writing_http_servers_and_clients[HTTPServer]
 - http://vertx.io/docs/vertx-core/java/#_reactor_and_multi_reactor[EventLoop]
-- http://vertx.io/docs/vertx-core/java/#_verticles[Launcher]Launcher
+- http://vertx.io/docs/vertx-core/java/#_verticles[Launcher]
 
 
 == Participants
@@ -41,13 +41,14 @@ image:images/LAB-1.png["Lab Scenario Intentions",height=712]
 
 [source,perl]
 
-==== STEP 1 - Create a Vert.x maven project with the following command initiating it with a single Vert.x Verticle using a Vert.x maven archetype
+==== STEP 1 - Create a Vert.x maven project with the following command initiating it with a single Vert.x Verticle using a Vert.x maven archetype. Notice that vertx-web will be included as dependency in pom.xml by adding -Ddependencies=web
 
 [source,perl]
 ----
+mkdir homeplan
 mvn io.fabric8:vertx-maven-plugin:1.0.9:setup -DprojectGroupId=com.redhat.consulting.vertx -DprojectArtifactId=homeplan -Dverticle=com.redhat.consulting.vertx.MainVerticle -Ddependencies=web
 ----
-
+    - Integrate the project with your prefered IDE
     - Inspect *_MainVerticle.java_* and the AbstractVerticle to identify getting access to the Vertx instance
     - Start the Vert.x eventloop locally with the following command and check the logs to ensure the Verticle has been successfully started
 
@@ -63,7 +64,7 @@ mvn compile vertx:run
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
 * Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*
   ** As a final step expose a "Hello World" message on a GET request to the *_'/'_* path of the HTTP server
-  ** *TEST* After the Verticle Redeployment hit http://127.0.0.0:8181/ and you should see "Hello World" returned
+  ** *TEST* After the Verticle Redeployment hit http://127.0.0.1:8181/ and you should see "Hello World" returned
 * Add new class Constants with the following content to be used later in this lab
 
 ----
@@ -100,7 +101,8 @@ private Map<String, String> homeplans= new HashMap<String, String>();
 ---- 
 
 * Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web]  and implement the following REST endpoints on the HTTP Server created previously
-      ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet) to retrieve all registerd homeplan IDs
+      ** Expose a *GET* operation on endpoint *_/homeplan_* to be handled by the method *_getAll_* (provided for you in the following code snipet) to retrieve all registerd homeplan IDs. Hint: http://vertx.io/docs/vertx-web/java/#_routing_by_exact_path[Routing by path]
+      
 
 [source,perl]
 ----
@@ -129,7 +131,7 @@ On a browser
 http://127.0.0.0:8181/homeplan
 ----
        
-      ** Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning the contents of a single HomePlan (Note: utilize Constants.ID_PARAM)
+      ** Expose a *GET* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) returning the contents of a single HomePlan (Note: utilize Constants.ID_PARAM). Hint: http://vertx.io/docs/vertx-web/java/#_capturing_path_parameters[Using path parameters]
 
 [source,perl]
 ----
@@ -140,7 +142,7 @@ http://127.0.0.0:8181/homeplan
     	} else {
     		routingContext.fail(404);
     	}
-    
+    }
 ----
 
 *TEST*
@@ -153,7 +155,7 @@ On a browser
 http://127.0.0.0:8181/homeplan/KousourisHouseplan
 ----
 
-      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) registering a single HomePlan
+      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) registering a single HomePlan. HINT: http://vertx.io/docs/vertx-web/java/#_routing_by_http_method[Routing by HTTP method]
 
 [source,perl]
 ----
@@ -181,7 +183,7 @@ mvn compile vertx:run
 curl -H "Content-Type: application/json" -X POST -d '@sanchoA.json'  http://127.0.0.1:8181/homeplan/Sancho
 
 sanchoA.json CONTENTS
-{ "SanschoHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "22"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "23"], "devices" : ["AIRCON", "bedroom-1"]}]}
+{ "id": "Sancho",  "sensorLocations": [{ "type": "kitchen", "id": "kitchen-1", "temperature": 22 }], "devices": [{ "type": "AIRCON", "id": "kitchen-1" }] }
 
 ----
 
@@ -193,8 +195,8 @@ sanchoA.json CONTENTS
 mvn compile vertx:run
 curl -H "Content-Type: application/json" -X PUT -d '@sanchoB.json'  http://127.0.0.1:8181/homeplan/Sancho
 
-testB.json CONTENTS
-{ "SanschoHomePlan" : [{ "sensorLocations" : ["kitchen", "kitchen-1", "30"], "devices" : ["AIRCON", "kitchen-1"]}, { "sensorLocations" : ["bedroom", "bedroom-1", "33"], "devices" : ["AIRCON", "bedroom-1"]}]}
+sanchoB.json CONTENTS
+{ "id": "Sancho",  "sensorLocations": [{ "type": "kitchen", "id": "kitchen-1", "temperature": 30 }], "devices": [{ "type": "AIRCON", "id": "kitchen-1" }] }
 ----
       
 
@@ -219,7 +221,7 @@ Json.encodePrettily(eventLoopID+...
   ** Do you notice a difference? 
   ** Now execute the GET /homeplan/{id} and report the findings and why there is a difference in each executin
 
-* Use the http://vertx.io/docs/vertx-core/java/#_verticles[Launcher] to manage instances via DeploymentOptions etc.
+* OPTIONAL - Use the http://vertx.io/docs/vertx-core/java/#_verticles[Launcher] to manage instances via DeploymentOptions etc.
 
 
 
