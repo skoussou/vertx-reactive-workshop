@@ -322,7 +322,7 @@ url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0
 
 
 
-==== STEP 3 - Modify Content to utilize Vert.x JavaRX API
+==== STEP 3 - Modify Content to utilize Vert.x JavaRX API (ALL THESE STEPS ARE OPTIONAL)
 
 *TBD*
 
