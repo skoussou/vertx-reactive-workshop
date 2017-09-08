@@ -75,13 +75,13 @@ oc login -u YOURNAME -P YOURPASSWORD -h ????
 
 ==== STEP 2 - Prepare maven projects for Openshift
 * clone/unzip https://github.com/skoussou/vertx-reactive-workshop Branch *LAB 5*
-* Add fabric8 plugin in project by running this maven command (do so only for the *_homeplan_* maven project the others are already prepared) 
+* Add fabric8 plugin in project by running this maven command in order to enable Openshift deployments via maven commands (do so only for the *_homeplan_* maven project the others are already prepared) 
 
 ----
 mvn io.fabric8:fabric8-maven-plugin:3.5.25:setup
 ----
 
-* Add libraries in pom.xml (do so only for the *_homeplan_* maven project the others are already prepared) 
+* Add libraries in pom.xml in order to provide Vert.x API for discovery of services on Openshift (do so only for the *_homeplan_* maven project the others are already prepared) 
 
 ----
 	   <dependency>
@@ -96,7 +96,7 @@ mvn io.fabric8:fabric8-maven-plugin:3.5.25:setup
 	   </dependency>
 ----
 
-* Add f8 property in pom.xml (between <properties>.....</properties>  (do so only for the *_homeplan_* maven project the others are already prepared)
+* Add f8 property in pom.xml (between <properties>.....</properties> for image base during image creation with the codebase(do so only for the *_homeplan_* maven project the others are already prepared)
 
 ----
     <!-- F8 configuration -->
