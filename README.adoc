@@ -55,7 +55,7 @@ mvn compile vertx:run
 ----
 
     - Make a change on *_MainVerticle.java_* and press 'Save'. You will see in the command line the *_vertx-maven-plugin_* fabric8 plugin redeploying the verticle
-    - Review the possible configurations https://vmp.fabric8.io/#common:configurations and run configurations https://vmp.fabric8.io/#common:run-configurations via the *_vertx-maven-plugin_* 
+    - Review the possible  link:https://vmp.fabric8.io/#common:configurations[plugin configurations] and run configurations link:https://vmp.fabric8.io/#common:run-configurations[plugin configurations] via the *_vertx-maven-plugin_* 
 
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
