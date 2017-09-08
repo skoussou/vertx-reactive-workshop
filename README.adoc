@@ -22,7 +22,7 @@ image:images/design.png["VertX Application",height=356]
 = LAB 1
 
 TIME ESTIMATION 30 MINUTES
-FOLLOWED by 15 MINUTES explain the solution
+FOLLOWED by 15 MINUTES to review the solution
 
 
 == Concepts visited in this LAB
@@ -34,6 +34,8 @@ FOLLOWED by 15 MINUTES explain the solution
 
 
 == Participants
+
+In this lab we utilize maven to generate a project where a Vert.x Verticle in *_homeplan_* service will provide an Http server to serve Restful requests. The requests (as can be seen in the diagram below) will provide operations to register, retrieve and update a homeplan.
 
 image:images/LAB-1.png["Lab Scenario Intentions",height=712] 
 
