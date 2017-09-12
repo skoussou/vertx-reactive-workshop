@@ -35,7 +35,9 @@ FOLLOWED by 15 MINUTES reviewing the solution
 == PARTICIPANTS
 
 In this lab, we further enhance our applications so that a new *_sensor-generator_* Vert.x application is added. This new app will generate for every registered homeplan a "random" temperature for each of the rooms (sensorLocations) registered. Basically, it will take into account the previous temperature, if the AIRCON is on/off and if it is set to INCREASE/DECREASE the room temeperature. 
+
 *_Device-management_* offers a service SEND/REPLY to read a specific device status available as a SEND/REPLY EventBus service.
+
 *_Homeplan_* offers a service SEND/REPLY to read a specific homeplan as a SEND/REPLY EventBus service.
 
 image:images/LAB-3.png["Lab Scenario Intentions",height=712] 
