@@ -238,8 +238,109 @@ oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -
 == Open Tasks
 
 * AWS Accounts
-* Personal Logins
-* Accounts for every team
+** New user and link:https://docs.openshift.com/enterprise/3.1/admin_guide/manage_authorization_policy.html[access to namespace]
+
+*** Add new login details
+[source, shell]
+----
+ssh ec2-user@MASTE-NODE-IP
+sudo su
+htpasswd -Bb /etc/origin/htpasswd lix lix123
+----
+
+*** Check access on project
+
+----
+[root@stkousso homeplan]# oc project workshop
+Now using project "workshop" on server "https://18.194.49.4:8443".
+[root@stkousso homeplan]# oc describe policyBindings :default -n workshop
+Name:					:default
+Namespace:				workshop
+Created:				23 minutes ago
+Labels:					<none>
+Annotations:				<none>
+Last Modified:				2017-09-14 08:25:48 +0100 BST
+Policy:					<none>
+RoleBinding[admin]:			 
+					Role:			admin
+					Users:			stelios
+					Groups:			<none>
+					ServiceAccounts:	<none>
+					Subjects:		<none>
+RoleBinding[system:deployers]:		 
+					Role:			system:deployer
+					Users:			<none>
+					Groups:			<none>
+					ServiceAccounts:	deployer
+					Subjects:		<none>
+RoleBinding[system:image-builders]:	 
+					Role:			system:image-builder
+					Users:			<none>
+					Groups:			<none>
+					ServiceAccounts:	builder
+					Subjects:		<none>
+RoleBinding[system:image-pullers]:	 
+					Role:			system:image-puller
+					Users:			<none>
+					Groups:			system:serviceaccounts:workshop
+					ServiceAccounts:	<none>
+					Subjects:		<none>
+[root@stkousso homeplan]#
+----
+
+*** Add new user to role *_admin_* to have access to namespace
+
+----
+[root@ip-172-31-18-91 ec2-user]# oadm policy add-role-to-user admin lix -n workshop
+----
+
+*** Check changes have taken place
+
+----
+[root@stkousso homeplan]# oc projects
+You have one project on this server: "workshop".
+[root@stkousso homeplan]# oc describe policyBindings :default -n workshop
+Name:					:default
+Namespace:				workshop
+Created:				11 hours ago
+Labels:					<none>
+Annotations:				<none>
+Last Modified:				2017-09-14 08:44:24 +0100 BST
+Policy:					<none>
+RoleBinding[admin]:			 
+					Role:			admin
+					Users:			stelios, lix
+					Groups:			<none>
+					ServiceAccounts:	<none>
+					Subjects:		<none>
+RoleBinding[system:deployers]:		 
+					Role:			system:deployer
+					Users:			<none>
+					Groups:			<none>
+					ServiceAccounts:	deployer
+					Subjects:		<none>
+RoleBinding[system:image-builders]:	 
+					Role:			system:image-builder
+					Users:			<none>
+					Groups:			<none>
+					ServiceAccounts:	builder
+					Subjects:		<none>
+RoleBinding[system:image-pullers]:	 
+					Role:			system:image-puller
+					Users:			<none>
+					Groups:			system:serviceaccounts:workshop
+					ServiceAccounts:	<none>
+					Subjects:		<none>
+RoleBinding[view]:			 
+					Role:			view
+					Users:			<none>
+					Groups:			<none>
+					ServiceAccounts:	default
+					Subjects:		<none>
+----
+
+
+*** Create Personal logis for each participant
 * Tighten Security on security group
 
 
