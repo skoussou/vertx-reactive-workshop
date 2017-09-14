@@ -55,5 +55,5 @@ TBD
 
 * AWS Openshift Setup
 
-Use https://github.com/skoussou/vertx-reactive-workshop/tree/README_AWS.adoc
+See link:https://github.com/skoussou/vertx-reactive-workshop/blob/master/README_AWS.adoc[README_AWS.adoc]
 
