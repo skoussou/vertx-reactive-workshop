@@ -19,4 +19,41 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 == Design
 image:images/design.png["VertX Application",height=356] 
 
+== Software/Hardware Pre-Requisites
+
+* BYOD Preperation
+
+  **  Hard Disk: 20 Gb,
+  **  Mem: 8 Gb,
+  **  CPU: Good one
+
+
+* Software
+
+  ** JDK 1.8 (test java -version)
+  ** MAVEN 3.3+ (mvn --version)
+  ** oc tools https://github.com/openshift/origin/releases (download for your environment from the bottom of the page)
+  ** docker installed
+  ** IDE (eg. JBDS, Eclipse, iDEA)
+
+== Openshift/Origin Setup
+
+* Openshift Origin 'oc cluster up'
+
+The following commands will give you a local Openshift Origin environment to deploy the microservices on 
+
+[source, shell]
+----
+oc cluster up
+oc new-project 'you-project-name'
+oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -n $(oc project -q)
+----
+
+* CDK
+
+TBD
+
+* AWS Openshift Setup
+
+Use https://github.com/skoussou/vertx-reactive-workshop/tree/README_AWS.adoc
 

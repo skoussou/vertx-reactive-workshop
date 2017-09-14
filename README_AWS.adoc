@@ -1,0 +1,248 @@
+= Cluster installation in AWS
+Stelios Kousouris <stelios@redhat.com>
+v0.3  2017-09-14
+
+== Resources
+
+* Install ansible 2.2 and dependencies on your mashine.
+
+[source,shell]
+----
+sudo dnf install -y ansible python-boto pyOpenSSL
+----
+
+if later you come against this issue https://github.com/ansible/ansible/issues/17147 the following may resolve it
+
+[source,shell]
+----
+dnf -y uninstall ansible
+pip install ansible
+----
+
+Clone the openshift-ansible GIT-repository.
+
+[source,shell]
+----
+git clone https://github.com/openshift/openshift-ansible.git
+cd openshift-ansible
+----
+
+The actual Install Guide: https://github.com/openshift/openshift-ansible/blob/master/README_AWS.md
+
+== Security groups
+
+In AMAZON AWS you have to change the _default_ Security group to allow all incomming traffic.
+Or just allow what is stated in the manual.
+
+== Config AWS
+
+Go to AWS --> Your Security Credentials and use the Access ID/KEy of a service User (I had stelaws downloaded locally when started with AWS)
+
+# go to somewhere in your drive and create credentials (no need to be the one below)
+.~/.aws/credentials
+
+[source,ini]
+----
+[default]
+aws_access_key_id=AKIXXXXXXX
+aws_secret_access_key=XXXXXXXXX
+----
+
+Note: you have to make sure that your ssh keys will allow you to access an AWS Instance and the same key/pair is provided below in  ec2_keypair or else the installation will fail
+
+== Config for the script
+# create if not already in /openshift-ansible
+
+cluster.conf
+[source,shell]
+----
+# We use Frankfurt
+export ec2_region='eu-central-1'
+export ec2_vpc_subnet='subnet-32838f5b'		(Note: Change to your subnet)
+# in vpc-78f8da11
+# This will be unique to your AWS acount
+
+# This RHEL based AMI works for Frankfurt
+export ec2_image='ami-875042eb'
+export ec2_instance_type='m4.large'
+
+# This SSH key has to exist in your AWS Account
+export ec2_keypair='ansible'				(Note: You can also create and import your own ssh key eg. create it in ~/.ssh/id_rsa, link: http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html#how-to-generate-your-own-key-and-import-it-to-aws[import id_rsa into AWS] and then replaced here "id_rsa" for "ansible". Alternative: in MyEC2Key change to what I have in your AWS account as KEYPAIR and also copy MyEC2Key.pem to ~/.ssh/)
+
+export ec2_security_groups="['default']"
+
+# Your RHN Account
+export rhel_subscription_user='XXXX@redhat.com'
+export rhel_subscription_pass='XXXX'
+export rhel_subscription_pool='Red Hat OpenShift Container Platform'
+----
+
+Source the config
+Run the installation:
+
+[source,shell]
+----
+source cluster.conf
+source ../credentials
+bin/cluster create aws -t openshift-enterprise loveandpeace
+----
+
+== Post Installation
+
+Of course you have to substitute the IP *_35.156.126.162_* with your actual master's IP and *_35.156.110.82_* with your infra node's IP.
+
+Log in to the master server using ssh `ssh -i 'ssh-key' ec2-user@35.156.126.162`. (or if file under user home with the -i 'ssh-key' part)
+
+Note: You may have to do the following as root (_sudo su_)
+
+* Create OCP accounts
+
+----
+[source,shell]
+----
+yum install httpd-tools
+
+htpasswd -cBb /etc/origin/htpasswd YOURNAME YOURNAME123
+----
+
+That produces:
+
+./etc/origin/htpasswd
+----
+YOURNAME:admin:$2y$05$dGj80Qbg7llqePI56XlO6egXceDaPytKsSj3iEjbC3n9beNQLwwRy
+----
+
+
+* Edit Master Config and switch from the DenyAll Provider to the HTPasswd
+
+
+Provider:
+
+.vi /etc/origin/master/master-config.yaml
+[source,yaml]
+----
+oauthConfig:
+  ...
+  identityProviders:
+    - name: my_htpasswd_provider
+      challenge: true
+      login: true
+      mappingMethod: claim
+      provider:
+        apiVersion: v1
+        kind: HTPasswdPasswordIdentityProvider
+        file: /etc/origin/htpasswd
+----
+
+* Restart services:
+
+[source,shell]
+----
+systemctl restart httpd (Note sure why this one is not there)
+systemctl restart atomic-openshift-master
+----
+
+* Add _cluster-admin_ permissions to user _admin_
+
+[source,shell]
+----
+oc login -u system:admin
+
+oadm policy add-cluster-role-to-user cluster-admin admin
+----
+
+== Reach the cluster
+
+You can connect to the OpenShift Console using the master's IP:
+
+https://MASTER_PUBLIC_IP:8443/console/
+
+You can open the Registry as well if you map the INFRA node hostname to the router in your
+_/etc/hosts_
+
+./etc/hosts
+----
+INFRA-NODE-IP registry-console-default.router.default.svc.cluster.local
+----
+
+And open this URL in your browser:
+https://registry-console-default.router.default.svc.cluster.local/
+
+make Service Endpoints reacheable from outside
+
+./etc/hosts
+----
+INFRA-NODE-IP homeplan-workshop.router.default.svc.cluster.local
+----
+
+
+== Setting up projects and accounts
+
+* Create new project
+
+[source, shell]
+----
+oc new-project 'NAME OF PROJECT'
+----
+
+----
+TECH EXCHANGE AWS NODES
+TASK [debug] ******************************************************************************************************************************************************************************************************
+ok: [localhost] => {
+    "changed": false, 
+    "msg": {
+        "techexchreactive": {
+            "master": {
+                "default": [
+                    {
+                        "name": "techexchreactive-master-1b913", 
+                        "private IP": "172.31.16.217", 
+                        "public IP": "18.194.3.156"
+                    }
+                ]
+            }, 
+            "node": {
+                "compute": [
+                    {
+                        "name": "techexchreactive-node-compute-a8edc", 
+                        "private IP": "172.31.21.130", 
+                        "public IP": "35.158.208.213"
+                    }, 
+                    {
+                        "name": "techexchreactive-node-compute-18810", 
+                        "private IP": "172.31.30.86", 
+                        "public IP": "35.157.61.117"
+                    }
+                ], 
+                "infra": [
+                    {
+                        "name": "techexchreactive-node-infra-425e0", 
+                        "private IP": "172.31.23.139", 
+                        "public IP": "18.194.49.159"
+                    }
+                ]
+            }
+        }
+    }
+}
+
+----
+
+
+* Give service account view priveleges for service discovery
+
+[source, shell]
+----
+oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -n $(oc project -q)
+----
+
+
+== Open Tasks
+
+* AWS Accounts
+* Personal Logins
+* Accounts for every team
+* Tighten Security on security group
+
+
+
