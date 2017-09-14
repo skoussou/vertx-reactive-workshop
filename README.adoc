@@ -65,11 +65,14 @@ oc login -u developer -p developer (NOTE*** those are default user/pass, put you
 oc policy add-role-to-user view system:serviceaccount:$(oc project -q):default -n $(oc project -q)
 ----
 
-    * *Option 2:* Connect to remote OCP cluster
+    * *Option 2:* Connect to remote Openshift cluster
 
 ----
-oc login -u YOURNAME -P YOURPASSWORD -h ????
+oc MASTER-NODE-IP:8443 login -u YOURNAME -P YOURPASSWORD
+oc project YOUR-PROJECT-NAMESPACE
 ----
+
+The above will be determined if an online environment is provided
 
 
 
