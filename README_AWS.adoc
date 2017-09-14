@@ -97,11 +97,9 @@ Note: You may have to do the following as root (_sudo su_)
 
 * Create OCP accounts
 
-----
 [source,shell]
 ----
 yum install httpd-tools
-
 htpasswd -cBb /etc/origin/htpasswd YOURNAME YOURNAME123
 ----
 
