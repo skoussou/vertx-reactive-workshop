@@ -35,7 +35,11 @@ FOLLOWED by 15 MINUTES reviewing the solution
 
 == PARTICIPANTS
 
-In this lab we finalise the scenario by enhancing sensor-generator to _publish_ ambiance data of a room (sensorLocation) into the EventBus and introduce a new Vert.x Microservice the *_homeplan-regulatorr_*. The new microservice will listen in for ambiance data and send a request/reply from *_homeplan_* for the homeplan the ambiance data belong to combining the knowledge to send a _device action_ on the EventBus. The *_device-management_* will be enhanced to consume _device action_ messages and published _ambiance data_ for the purpose of updating a device with the action to take and the current room temperature.
+In this lab we finalise the scenario by enhancing sensor-generator to _publish_ ambiance data of a room (sensorLocation) into the EventBus and introduce a new Vert.x Microservice: the *_homeplan-regulator_*. 
+
+The new microservice will listen for ambiance data and send a request/reply from *_homeplan_* for the homeplan the ambiance data belong to combining the knowledge to send a _device action_ on the EventBus. 
+
+The *_device-management_* will be enhanced to consume _device action_ messages and published _ambiance data_ for the purpose of updating a device with the action to take and the current room temperature.
 
 image:images/LAB-4.png["Lab Scenario Intentions",height=712] 
 
@@ -45,19 +49,19 @@ image:images/LAB-4.png["Lab Scenario Intentions",height=712]
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/homeplan
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/device-management
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/sensor-generator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan-regulator
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/homeplan-regulator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ----
 
@@ -70,31 +74,35 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 * Create Content for verticles in *_homeplan-regulator_* maven project to complete the service
   ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_startHomeplanRegulatorEventBusProvider()_* to consume messages published on *_#ambiance-data_* and extract the sensor reading
-     *** As soon as this is completed and saved the redeployment will result on an error to appear at the console log for *_homeplan-regulator_*
+     *** As soon as this is completed and saved the redeployment will result on an error to appear at the console log for *_homeplan-regulator_* if there would be any homplan created. If not, create one as explained below.
 
 ----
-SEVERE: 401: HOMEPLAN_REGULATOR_FAIL_APPLY_HOMEPLANHomeplan Regulation Error
+SEVERE: 401: HOMEPLAN_REGULATOR_FAIL_APPLY_HOMEPLAN Homeplan Regulation Error
 [INFO] io.vertx.core.impl.NoStackTraceThrowable: FIXME - Missing solution to send the HomePlan Regulator decision on device [SENSOR-LOCATION-DEVICE-ID]
 ----
 
-   ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API]  Fix method *_sendRegulatoryMsg_* to generate a message  which can be delivered to *_#device-action_* EventBus address to signify different actions on a device INCREASING/DECREASING/TURNOFF. 
+   ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API]  Fix method *_sendRegulatoryMsg_* to generate a message  which can be delivered to *_#device-action_* EventBus address to signify different actions on a device INCREASING/DECREASING/TURNOFF. Hint: Setting headers on messages
 
 ----
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/homeplan
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/device-management
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/device-management
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/sensor-generator
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/sensor-generator
+mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
+
+open new terminal
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/homeplan-regulator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
 cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
-url -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
+curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
      ====== TESTS
