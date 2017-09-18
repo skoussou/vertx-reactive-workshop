@@ -101,7 +101,7 @@ cd [REPOSITORY CLONED DIR - Branch LAB-4]/homeplan-regulator
 mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 open new terminal
-cd [REPOSITORY CLONED DIR - Branch LAB-3]/homeplan/data
+cd [REPOSITORY CLONED DIR - Branch LAB-4]/homeplan/data
 curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
