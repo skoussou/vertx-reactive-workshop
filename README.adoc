@@ -114,12 +114,6 @@ mvn io.fabric8:fabric8-maven-plugin:3.5.25:setup
 mvn package fabric8:deploy -Dfabric8.mode=openshift
 ----
 
-   ** *TBD* build (how and why??)
-   ** *TBD* deploy (show them if you want custom deploymentConfig)
-* REALLY NEEDED any more if I use JAVA_ARGS instead?
-  DeploymentConfig has not been properly set... f8 issue? Add this env variable to dc:
-  JAVA_OPTIONS => -Dvertx.cacheDirBase=/tmp -Dvertx.hazelcast.config=classpath:openshift/cluster-config.xml -Djava.net.preferIPv4Stack=true
-   ** Repeat this step for all for Microservices to generate a POD for each in the Openshift environment
 * Test 
    ** *_oc get -w pods_* and note the POD IDs of the PODS which are running the microservices
    ** *_oc logs -f POD_ID_* for each POD and check that the cluster has been successfully created
