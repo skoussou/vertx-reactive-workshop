@@ -88,7 +88,7 @@ public class MainVerticle extends AbstractVerticle {
 				String housePlanId = devicesToRegister.getId();
 				List<DeviceDTO> devices = devicesToRegister.getDevices();
 				for (DeviceDTO device : devices) {
-					registerDevice(generatedDeviceKey(devicesToRegister.getId(), device.getId()), 
+					addDevice(generatedDeviceKey(devicesToRegister.getId(), device.getId()), 
 							new Device(housePlanId, device.getId(), device.getType(), device.getAction(), 
 									device.getState(), generateRandomLocationSensorTemperature(), device.getLastUpdate()));
 				}
@@ -97,7 +97,7 @@ public class MainVerticle extends AbstractVerticle {
 	}
 
 	// If we want to do something with the final result/oucome I need to pass a handler eg. SEND/REPLY otherwise no handler needed
-	private Future<Device> registerDevice(String key, Device deviceRegister) {
+	private Future<Device> addDevice(String key, Device deviceRegister) {
 	// NEW VERSION with Futures (Can we do it with RXJava API?
 		
 		Future<Device> futureRegDevice = Future.future();
