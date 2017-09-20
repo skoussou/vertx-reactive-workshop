@@ -99,7 +99,7 @@ public class MainVerticle extends AbstractVerticle {
         }
 
 	// If we want to do something with the final result/oucome I need to pass a handler eg. SEND/REPLY otherwise no handler needed
-	private void registerDevice(String key, Device deviceRegister) {
+	private void addDevice(String key, Device deviceRegister) {
            logger.info("Handler for adding Device ["+deviceRegister+"] is missing. You need to complete it");
            // FIXME: Get access to Vert.x shared Data and retrieve Map Constants.DEVICES_MAP 
            //        then provide a handler with the following code snippet to register the device to it

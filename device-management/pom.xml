@@ -150,7 +150,7 @@
 					<plugin>
 						<groupId>io.fabric8</groupId>
 						<artifactId>fabric8-maven-plugin</artifactId>
-						<version>3.5.25</version>
+						<version>3.5.28</version>
 						<executions>
 							<execution>
 								<id>fmp</id>
@@ -167,9 +167,5 @@
 		</profile>
 
 	</profiles>
-
-
-
-
-
+	
 </project>
