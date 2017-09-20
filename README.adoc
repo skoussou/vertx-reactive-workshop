@@ -1,8 +1,6 @@
 = SCENARIO
 
-Here to PoC the Scenario components of the following scenario
-
-image:images/design.png["VertX Application",height=356] 
+image:images/Visual-Scenario.png["VertX Application Scenario",height=712] 
 
 == The Micro-Homeplan Application
 
@@ -14,10 +12,12 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 * The *_device management_* - this is a component which receives registration and update requests on the devices.
 
-*  The *_sensor generator_* - this is a ficticious service emitting every 20 secs an event indicating the room temperature dependent on the state of the heating device (ON/OFF and INCREASING/DECREASING temperature)
+* The *_sensor generator_* - this is a ficticious service emitting every 20 secs an event indicating the room temperature dependent on the state of the heating device (ON/OFF and INCREASING/DECREASING temperature)
 
 * The *_homeplan regulator_* - this is a service which reads our current homeplan and based on the emmitted temperature in the room it regulates the action a device has to take to enforece the plan ie. INCREASE, DECREASE temperature of TURNOFF the device.
 
+== Design
+image:images/design.png["VertX Application",height=356]
 
 
 = link:https://github.com/skoussou/vertx-reactive-workshop/blob/LAB-1/README.adoc[LAB 1]
