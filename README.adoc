@@ -32,6 +32,7 @@ image:images/design.png["VertX Application",height=356]
 
   ** JDK 1.8 (test java -version)
   ** MAVEN 3.3+ (mvn --version)
+  ** Openshift Official Supported (requires subscription) oc tools https://access.redhat.com/downloads/content/290/ver=3.6/rhel---7/3.6.173.0.21/x86_64/product-software
   ** oc tools https://github.com/openshift/origin/releases (download for your environment from the bottom of the page)
   ** docker installed
   ** IDE (eg. JBDS, Eclipse, iDEA)
