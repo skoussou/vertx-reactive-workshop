@@ -20,13 +20,13 @@ It’s going to be a fake home appliance IOT management app, where we will be ab
 
 
 
-= LAB 1
+= link:https://github.com/skoussou/vertx-reactive-workshop/blob/LAB-1/README.adoc[LAB 1]
 
-= LAB 2
+= link:https://github.com/skoussou/vertx-reactive-workshop/blob/LAB-2/README.adoc[LAB 2]
 
-= LAB 3
+= link:https://github.com/skoussou/vertx-reactive-workshop/blob/LAB-3/README.adoc[LAB 3]
 
-= LAB 4
+= link:https://github.com/skoussou/vertx-reactive-workshop/blob/LAB-4/README.adoc[LAB 4]
 
-= LAB 5
+= link:https://github.com/skoussou/vertx-reactive-workshop/blob/LAB-5/README.adoc[LAB 5]
 
