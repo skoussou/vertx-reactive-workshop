@@ -81,7 +81,7 @@ The above will be determined if an online environment is provided
 * Add fabric8 plugin in project by running this maven command in order to enable Openshift deployments via maven commands (do so only for the *_homeplan_* maven project the others are already prepared) 
 
 ----
-mvn io.fabric8:fabric8-maven-plugin:3.5.25:setup
+mvn io.fabric8:fabric8-maven-plugin:3.5.28:setup
 ----
 
 * Add libraries in pom.xml in order to provide Vert.x API for discovery of services on Openshift (do so only for the *_homeplan_* maven project the others are already prepared) 
