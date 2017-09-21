@@ -4,7 +4,7 @@
 
 * This installation is based on link:https://github.com/gnunn1/openshift-aws-setup[Openshift AWS setup]
 * Check pre-requisites in the provided link
-* This notes summarize it and add some important checks/validations/customizations
+* These set of notes summarize above setup and add some important checks/validations/customizations
 
 [source,shell]
 ----
