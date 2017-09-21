@@ -6,6 +6,8 @@
 * Check pre-requisites in the provided link
 * This set of notes summarize above setup and add some important checks/validations/customizations
 
+Start by cloning the mentioned repository
+
 [source,shell]
 ----
   git clone https://github.com/gnunn1/openshift-aws-setup.git
