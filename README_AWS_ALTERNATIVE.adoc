@@ -1,0 +1,40 @@
+= Cluster installation in AWS
+
+== Preparation
+
+* This installation is based on link:https://github.com/gnunn1/openshift-aws-setup[Openshift AWS setup]
+* Check pre-requisites in the provided link
+* This notes summarize it and add some important checks/validations/customizations
+
+[source,shell]
+----
+  git clone https://github.com/gnunn1/openshift-aws-setup.git
+----
+
+== Checks, validations and customizations
+
+Check file => vars/aws-config.yaml for infrastructure related items (server sizing, intallation type, AMI id, public dns zone or users to be created in the platform, among others)
+
+Check file => roles/openshift-install/files/openshift_inventory.cfg  for any openshift related customization (such as enabling/disabling logging and metrics..)
+
+Modify file => roles/openshift-install/roles/openshift-pre-reqs/main.yml if running on RHEL servers (in my case, I had to remove docker-1.12.6 and set just docker)
+
+== Steps
+
+Export your AWS key and secret:
+
+[source,shell]
+----
+	export AWS_ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxx
+	export AWS_SECRET_ACCESS_KEY=yyyyyyyyyyyyyyyyy
+----
+
+Run OCP (openshift-enterprise) installation
+
+[source,shell]
+----
+  ./openshift-playbook-run.sh  -e rhsm_username=rh-username -e rhsm_password=rh-userpass -e rhsm_pool=poolID
+----
+
+
+
