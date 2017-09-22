@@ -57,12 +57,18 @@ TBD
 * AWS Openshift Setup
 
 ** Option 1: See link:https://github.com/skoussou/vertx-reactive-workshop/blob/master/README_AWS.adoc[README_AWS.adoc]
-** Option 2: See
+** Option 2: See link:https://github.com/skoussou/vertx-reactive-workshop/blob/master/README_AWS_ALTERNATIVE.adoc[README_AWS_ALTERNATIVE.adoc]
 
-* External Reading
+== External Reading
 ** link:https://dzone.com/articles/javautilconcurrentfuture[java.util.concurrent.Future Basics]
 ** link:https://dzone.com/articles/java-callable-future-understanding[Understand Java Callable and Future]
 ** link:http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/[Java 8 Concurrency Tutorial: Threads and Executors]
 ** link:https://www.cubrid.org/blog/inside-vertx-comparison-with-nodejs/[Inside Vert.x. Comparison with Node.js]
 ** link:https://www.cubrid.org/blog/understanding-vertx-architecture-part-2[https://www.cubrid.org/blog/understanding-vertx-architecture-part-2]
 
+== Vert.x LABs
+* link:https://github.com/skoussou/vertx-reactive-workshop/tree/LAB-1[LAB-1]
+* link:https://github.com/skoussou/vertx-reactive-workshop/tree/LAB-2[LAB-2]
+* link:https://github.com/skoussou/vertx-reactive-workshop/tree/LAB-3[LAB-3]
+* link:https://github.com/skoussou/vertx-reactive-workshop/tree/LAB-4[LAB-4]
+* link:https://github.com/skoussou/vertx-reactive-workshop/tree/LAB-5[LAB-5]
