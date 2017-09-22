@@ -64,7 +64,7 @@ TBD
 ** link:https://dzone.com/articles/java-callable-future-understanding[Understand Java Callable and Future]
 ** link:http://winterbe.com/posts/2015/04/07/java8-concurrency-tutorial-thread-executor-examples/[Java 8 Concurrency Tutorial: Threads and Executors]
 ** link:https://www.cubrid.org/blog/inside-vertx-comparison-with-nodejs/[Inside Vert.x. Comparison with Node.js]
-** link:https://www.cubrid.org/blog/understanding-vertx-architecture-part-2[https://www.cubrid.org/blog/understanding-vertx-architecture-part-2]
+** link:https://www.cubrid.org/blog/understanding-vertx-architecture-part-2[Understanding Vertx Architecture]
 
 == Vert.x LABs
 * link:https://github.com/skoussou/vertx-reactive-workshop/tree/LAB-1[LAB-1]
