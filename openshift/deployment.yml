@@ -10,4 +10,4 @@ spec:
                   apiVersion: v1
                   fieldPath: metadata.namespace
              - name: JAVA_ARGS
-              value: '-Dvertx.cacheDirBase=/tmp -Dvertx.hazelcast.config=classpath:openshift/cluster-config.xml -Djava.net.preferIPv4Stack=true -cluster'
+               value: '-Dvertx.cacheDirBase=/tmp -Dvertx.hazelcast.config=classpath:openshift/cluster-config.xml -Djava.net.preferIPv4Stack=true -cluster'
