@@ -155,7 +155,7 @@ On a browser
 http://127.0.0.0:8181/homeplan/KousourisHouseplan
 ----
 
-      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_getOne_* (provided for you in the following code snipet) registering a single HomePlan. HINT: http://vertx.io/docs/vertx-web/java/#_routing_by_http_method[Routing by HTTP method]
+      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the following code snipet) registering a single HomePlan. HINT: http://vertx.io/docs/vertx-web/java/#_routing_by_http_method[Routing by HTTP method]
 
 [source,perl]
 ----
