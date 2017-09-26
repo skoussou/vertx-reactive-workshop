@@ -48,10 +48,10 @@ FOLLOWED by 15 MINUTES reviewing the solution
 ----
 oc cluster up
 ----
-    * Create project
+    * Create project (Set a inique name. Ex: workshop-_username_)
 
 ----
-oc new-project workshop
+oc new-project workshop-developer1
 ----
    
     * Login into that project so f8 plugin will be able to use this user
