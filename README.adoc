@@ -26,7 +26,8 @@ image:images/design.png["VertX Application",height=356]
   **  Hard Disk: 20 Gb,
   **  Mem: 8 Gb,
   **  CPU: Good one
-
+  
+*Note:* *_Mac OSX_* users checkout this link:https://github.com/vert-x3/issues/issues/244[issue on binding to localhost]
 
 * Software
 
