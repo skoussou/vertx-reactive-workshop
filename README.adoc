@@ -24,6 +24,8 @@ image:images/design.png["VertX Application",height=356]
 TIME ESTIMATION 30 MINUTES
 FOLLOWED by 15 MINUTES to review the solution
 
+*Note:* *_Mac OSX_* users checkout this link:https://github.com/vert-x3/issues/issues/244[issue on binding to localhost]
+
 
 == Concepts visited in this LAB
 
