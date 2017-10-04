@@ -64,7 +64,7 @@ mvn compile vertx:run
 
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
-* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*. *_Note_*: For MacOs users, check this https://thoeni.io/post/macos-sierra-java/[link] to avoid long and blocking application startup time.
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*. For *_MacOs users_*, check this https://thoeni.io/post/macos-sierra-java/[link] to avoid long and blocking application startup time.
   ** As a final step expose a "Hello World" message on a GET request to the *_'/'_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.1:8181/ and you should see "Hello World" returned
 * Add new class Constants with the following content to be used later in this lab
