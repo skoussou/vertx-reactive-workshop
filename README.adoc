@@ -69,11 +69,11 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 ==== STEP 2 - Create content for the following parts of the scenario
 
 * Create Content for verticles in *_sensor-generator_* maven project to complete the service
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_sendAmbianceData(DeviceStatusDTO deviceStatus, HomePlanDTO homePlan)_* to publish the generated ambiance data of a location in the house on EventBus address *_#ambiance-data_*
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_sendAmbianceData(DeviceStatusDTO deviceStatus, HomePlanDTO homePlan)_* in *_MainVerticle.java_* to publish the generated ambiance data of a location in the house on EventBus address *_#ambiance-data_*
     *** It will be tested with the following changes
 
 * Create Content for verticles in *_homeplan-regulator_* maven project to complete the service
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_startHomeplanRegulatorEventBusProvider()_* to consume messages published on *_#ambiance-data_* and extract the sensor reading
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_the_event_bus_api[Vert.x EventBus API] Fix method *_startHomeplanRegulatorEventBusProvider()_* in *_MainVerticle.java_* to consume messages published on *_#ambiance-data_* and extract the sensor reading
      *** As soon as this is completed and saved the redeployment will result on an error to appear at the console log for *_homeplan-regulator_* if there would be any homplan created. If not, create one as explained below.
 
 ----
