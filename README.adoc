@@ -91,7 +91,7 @@ cd [REPOSITORY CLONED DIR - Branch LAB-2]/homeplan/data
 curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.0.1:8080/homeplan/test3
 ----
 
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_registerDevice_* and PUT the devices into a shared-map
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#_using_shared_data_with_vert_x[Shared Data on Vert.x] Fix method *_addDevice_* and PUT the devices into a cluster wide shared-map
     ** Use the above test and now each device should be showing as registered in the logs
 
 
