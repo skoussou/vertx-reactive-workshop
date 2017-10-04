@@ -54,7 +54,7 @@ mvn compile vertx:run -Dvertx.runArgs="-cluster -Djava.net.preferIPv4Stack=true"
 
 ==== STEP 2 - Create content for the following parts of the scenario
 * Create Content for verticles in *_homeplan_* maven project to complete the service
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* to *_send_* Messages to *_#device-reg_* on the bus
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_sendDevicesRegistration(FullHomePlanDTO fullHomePlanDto)_* in *_MainVerticle.java_* to *_send_* Messages to *_#device-reg_* on the bus
     *** Test by executing the following request and check the console of the *_homeplan_* Vert.x application for output showing the registration taking place. 
     
 ----
@@ -74,7 +74,7 @@ curl -H "Content-Type: application/json" -X POST -d '@test3.json'  http://127.0.
 Did your test success? If so, continue with next part of the lab. If you got an "Internal Error" as response.. Are you properly encoding your message as String? Add this to the message => Json.encode(message). In this lab, we are just using Strings as messages, so there is not any additional codec type used.
 
 * Create Content for verticles in *_device-management_* maven project to complete the service
-  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* to *_consume_* Messages from *_#device-reg_* EventBus address and complete register Device action
+  ** Using resources at link:http://vertx.io/docs/vertx-core/java/#event_bus[Vert.x EventBus] Fix method *_registerDevices_* in *_MainVerticle.java_* to *_consume_* Messages from *_#device-reg_* EventBus address and complete register Device action
     *** Test by executing the following request and check the console of the device-management Verticle for output *_Handler for adding Device ["DEVICE CONTENT"] is missing. You need to complete it_*
 
 ----
