@@ -89,7 +89,7 @@ public class MainVerticle extends AbstractVerticle {
 				String housePlanId = devicesToRegister.getId();
 				List<DeviceDTO> devices = devicesToRegister.getDevices();
 				for (DeviceDTO device : devices) {
-					registerDevice(generatedDeviceKey(devicesToRegister.getId(), device.getId()), 
+					addDevice(generatedDeviceKey(devicesToRegister.getId(), device.getId()), 
 							new Device(housePlanId, device.getId(), device.getType(), device.getAction(), 
 									device.getState(), generateRandomLocationSensorTemperature(), device.getLastUpdate()));
 				}
