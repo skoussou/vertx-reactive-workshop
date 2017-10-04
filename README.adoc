@@ -64,7 +64,7 @@ mvn compile vertx:run
 
 
 ====  STEP 2 In this step you will create an HTTP server and expose *_homeplan_* service endpoints
-* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*
+* Use resources at http://vertx.io/docs/vertx-web/java/[Vert.x Web] to create an HTTP server so that it exposes the services in port 8181 in the *_start()_* method of the *_MainVerticle.java_*. *_Note_*: For MacOs users, check this https://thoeni.io/post/macos-sierra-java/[link] to avoid long and blocking application startup time.
   ** As a final step expose a "Hello World" message on a GET request to the *_'/'_* path of the HTTP server
   ** *TEST* After the Verticle Redeployment hit http://127.0.0.1:8181/ and you should see "Hello World" returned
 * Add new class Constants with the following content to be used later in this lab
@@ -157,7 +157,7 @@ On a browser
 http://127.0.0.0:8181/homeplan/KousourisHouseplan
 ----
 
-      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the following code snipet) registering a single HomePlan. HINT: http://vertx.io/docs/vertx-web/java/#_routing_by_http_method[Routing by HTTP method]
+      ** Expose a *POST* operation on endpoint *_/homeplan/{id}_* to be handled by the method *_addOne_* (provided for you in the following code snipet) registering a single HomePlan. HINT: http://vertx.io/docs/vertx-web/java/#_routing_by_http_method[Routing by HTTP method] and don't forget to define a BodyHandler in your router to be able to access incoming messages content.
 
 [source,perl]
 ----
